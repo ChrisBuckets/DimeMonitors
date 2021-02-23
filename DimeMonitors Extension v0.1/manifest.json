@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+
+  "name": "Dime Monitors Extension",
+  "version": "0.1.0",
+  "description": "",
+
+  "icons": {
+    "16": "DimeMonitorLogo.png",
+    "48": "DimeMonitorLogo.png",
+    "128": "DimeMonitorLogo.png"
+  },
+  "content_scripts": [
+    {
+      "js": ["content.js"],
+      "matches": ["https://accounts.meetdapper.com/*"]
+    }
+  ]
+}
