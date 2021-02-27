@@ -9279,3 +9279,4 @@ TypeError: Cannot read property 'send' of undefined
 TypeError: Cannot read property 'send' of undefined
 Not enough cards listed for Montrezl Harrell  2588 Base Set 100
 Not enough cards listed for Montrezl Harrell  2588 Base Set 100
+TypeError: Cannot read property 'send' of undefined

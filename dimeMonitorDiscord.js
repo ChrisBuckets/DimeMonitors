@@ -27,7 +27,7 @@ class discordBot {
     await client.login(config.token);
   }
 
-  sendCard(card) {
+  async sendCard(card) {
     try {
       let thumbnail = new Discord.MessageAttachment("./kobe.jpg", "kobe.jpg");
 
@@ -95,10 +95,13 @@ class discordBot {
           }*/
         );
 
-      if (card.test) {
+      if (card.test || card.delay) {
         let channel = client.channels.cache.get("814674606396538890");
-        return channel.send(embed);
+        channel.send(embed);
       }
+      const timer = (ms) => new Promise((res) => setTimeout(res, ms));
+      if (card.delay) await timer(7500);
+
       if (card.set == "The Gift") {
         console.log("Cool cats");
         let channel = client.channels.cache.get("810283537097687051");

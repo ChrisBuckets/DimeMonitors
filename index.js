@@ -20,11 +20,11 @@ console.log(card);*/
 
 startDime();
 
-/*SoldCard.find({ name: "Montrezl Harrell", setSeries: "1" }, async function (err, cards) {
+/*SoldCard.find({ name: "LeBron James", setSeries: "2" }, async function (err, cards) {
   await startDime();
   let card = cards[0];
-  card.serialNumber = "2588";
-  card.price = 100;
+  card.serialNumber = "1165";
+  card.price = 1;
   card.test = true;
 
   checkForSnipes(card, 86400000);
@@ -330,6 +330,9 @@ function postCard(card) {
     console.log("posting card");
     getDiscordChannel(card);
     console.log("posting card");
+    card.delay = false;
+    if (card.serialAverage - card.price >= 350) card.delay = true;
+
     dime.sendCard(card);
   }).lean();
 }
