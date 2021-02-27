@@ -20,12 +20,14 @@ console.log(card);*/
 
 startDime();
 
-/*SoldCard.find({ name: "LeBron James", setSeries: "2" }, async function (err, cards) {
+/*SoldCard.find({ name: "Montrezl Harrell", setSeries: "1" }, async function (err, cards) {
   await startDime();
   let card = cards[0];
-  card.serialNumber = "10498";
-  card.price = 2;
-  checkForSnipes(card);
+  card.serialNumber = "2588";
+  card.price = 100;
+  card.test = true;
+
+  checkForSnipes(card, 86400000);
 });*/
 // Push to queue, if can get data from cryptoslam send to discord, if not just save to DB
 const db = mongoose.connection;
@@ -201,7 +203,7 @@ function checkForSnipes(card, time) {
     },
     (err, cards) => {
       if (err) console.log(err);
-      if (cards.length < 10 && time <= 604800000) {
+      if (cards.length < 5 && time <= 604800000) {
         //If timestamp of sales check is less then or equal to a week, run function again to check all sales
 
         fs.appendFileSync(
@@ -240,7 +242,9 @@ function checkForSnipes(card, time) {
           return obj.price;
         })
         .splice(0, 5);
-      if (array.length > 5) array.splice(0, 3);
+      console.log(array);
+      if (array.length > 5) array.splice(0, 1);
+
       let newAverage = 0;
       for (let i = 0; i < array.length; i++) {
         newAverage += parseInt(array[i].price);
@@ -249,7 +253,7 @@ function checkForSnipes(card, time) {
       card.averageLength = array.length;
       card.rate = originalAverage / newAverage;
       card.serialAverage = originalAverage; // Set card's serial average to the original, if the new one is 3 times lower then set it to the new one.
-      if (originalAverage / newAverage >= 3) {
+      if (originalAverage / newAverage >= 1.5) {
         card.serialAverage = newAverage;
       }
 
@@ -277,7 +281,21 @@ function checkForSnipes(card, time) {
       let rangedDifference = parseInt(card.price) / card.serialAverage; //parseInt(card.price) / serialAverage;
       //console.log(array);
       //console.log("AVERAGE PRICE " + average);
-      console.log("SERIAL AVERAGE " + totalSerialRange + " " + cardsWithinRange + " " + originalAverage);
+      console.log("card serial average" + card.serialAverage + " average difference " + originalAverage / newAverage);
+      console.log(
+        "SERIAL AVERAGE " +
+          totalSerialRange +
+          " Cards within range: " +
+          cardsWithinRange +
+          " original average: " +
+          originalAverage +
+          " new average: " +
+          newAverage +
+          " ranged difference" +
+          rangedDifference +
+          " time range: " +
+          time
+      );
       console.log("TOTAL RANGED DIFFERENCE " + rangedDifference);
 
       //card.serialAverage = serialAverage;
@@ -307,6 +325,7 @@ function postCard(card) {
       card.link = `${cardLink.link}?serialNumber=${card.serialNumber}`;
 
       card.imageLink = cardLink.imageLink;
+      card.serialMax = cardLink.serialMax;
     }
     console.log("posting card");
     getDiscordChannel(card);
@@ -321,11 +340,13 @@ function getDiscordChannel(card) {
     card.channel = "805658697556557824";
     if (/*card.averagePriceProfit >= 0.2 || */ card.averageSerialProfit >= 20) {
       card.channel = "805659038708006935";
-      if (/*card.averagePriceProfit >= 0.5 ||*/ card.averageSerialProfit >= 40 || card.serialNumber <= 50) {
+      if (/*card.averagePriceProfit >= 0.5 ||*/ card.averageSerialProfit >= 40) {
         console.log("channel sent");
         card.channel = "805658965235990538";
       }
     }
+
+    if (card.serialNumber <= 50) card.channel = "805658965235990538";
   }
 
   if (parseInt(card.serialNumber) == 1) {

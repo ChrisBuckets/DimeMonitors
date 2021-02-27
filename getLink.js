@@ -8,9 +8,7 @@ const moment = require("moment");
 //const moment = require("moment-timezone");
 mongoose.connect("mongodb://localhost/cards", { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true });
 let browser;
-getCardLink().then(function () {
-  console.log("done");
-});
+getCardLink();
 async function getCardLink() {
   browser = await puppeteer.launch({
     headless: false,
@@ -18,7 +16,7 @@ async function getCardLink() {
     userDataDir: `./userdata/DimeMonitors`,
     args: ["--window-size=1920,1080"],
   });
-
+  console.log("finding");
   await SoldCard.find({ dateOfMoment: { $exists: true } }, async (err, cards) => {
     const page = await browser.newPage();
 
@@ -27,8 +25,10 @@ async function getCardLink() {
       height: 1080,
       deviceScaleFactor: 0.75,
     });
+    console.log("length");
     console.log(cards.length);
-    for (let i = 0; i < cards.length; i++) {
+    for (let i = cards.length - 1; i >= 0; i--) {
+      console.log("yo");
       try {
         let card = cards[i];
         console.log(card.setID + " " + card.playID);
@@ -59,7 +59,7 @@ async function getCardLink() {
         break;
       }
     }
-  });
+  }).lean();
 }
 
 async function goToCard(card, page) {
@@ -87,9 +87,11 @@ async function goToCard(card, page) {
   console.log("title " + title);
   await page.waitForTimeout(3000);
 
-  await page.evaluate((_) => {
-    for (let i = 0; i < 3; i++) {
+  await page.evaluate(async (_) => {
+    for (let i = 0; i < 5; i++) {
+      const timer = (ms) => new Promise((res) => setTimeout(res, ms));
       window.scrollBy(0, 1000 * (i + 1));
+      await timer(2500);
     }
   });
 

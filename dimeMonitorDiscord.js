@@ -41,12 +41,14 @@ class discordBot {
         .setThumbnail(card.imageLink ? card.imageLink : "attachment://kobe.jpg")
 
         //.attachFiles(logo)
-        .setFooter(
-          `Dime Monitors (Local) | ${Date.now() - card.listTime} ms | Cadence: ${card.cadence} | Discord: ${
+        .setFooter(`Powered by Dime Monitors | ${Date.now() - card.listTime} ms`, client.user.displayAvatarURL())
+        /*.setFooter(
+          `Powered by Dime Monitors | ${Date.now() - card.listTime} ms | Cadence: ${card.cadence} | Discord: ${
             Date.now() - card.discordPost
           } | Snipe Check: ${card.checkForSnipes} | Count: ${card.count} | getEvents: ${card.getEvents}`,
           client.user.displayAvatarURL()
-        )
+        )*/
+
         .setColor("#00AAFF")
         .setTimestamp()
         .addFields(
@@ -85,7 +87,7 @@ class discordBot {
           },
           {
             name: "Serial Number",
-            value: `${card.serialNumber}`,
+            value: `${card.serialNumber} / ${card.serialMax}`,
           }
           /*{
             name: "Sales",
@@ -93,6 +95,10 @@ class discordBot {
           }*/
         );
 
+      if (card.test) {
+        let channel = client.channels.cache.get("814674606396538890");
+        return channel.send(embed);
+      }
       if (card.set == "The Gift") {
         console.log("Cool cats");
         let channel = client.channels.cache.get("810283537097687051");

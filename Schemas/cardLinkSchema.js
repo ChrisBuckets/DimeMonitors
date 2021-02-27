@@ -12,6 +12,8 @@ const cardLinkSchema = new mongoose.Schema({
   setSeries: String,
   link: String,
   imageLink: String,
+
+  serialMax: String,
 });
 cardLinkSchema.index({ setID: 1, playID: 1, dateOfMoment: 1, link: 1 }, { unique: true });
 
