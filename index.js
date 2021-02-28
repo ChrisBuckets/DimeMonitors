@@ -20,11 +20,11 @@ console.log(card);*/
 
 startDime();
 
-/*SoldCard.find({ name: "LeBron James", setSeries: "2" }, async function (err, cards) {
+/*SoldCard.find({ name: "Coby White", setSeries: "2" }, async function (err, cards) {
   await startDime();
   let card = cards[0];
-  card.serialNumber = "1165";
-  card.price = 1;
+  card.serialNumber = "541";
+  card.price = 60;
   card.test = true;
 
   checkForSnipes(card, 86400000);
@@ -191,6 +191,8 @@ async function getCard(data, address, momentIDs, hwm, startTime, j, length, getE
 }
 function checkForSnipes(card, time) {
   card.checkForSnipes = Date.now();
+  console.log(time);
+  console.log(Date.now() - 259200000);
   SoldCard.find(
     {
       set: card.set,
@@ -203,14 +205,22 @@ function checkForSnipes(card, time) {
     },
     (err, cards) => {
       if (err) console.log(err);
-      if (cards.length < 5 && time <= 604800000) {
+      console.log("yo");
+      console.log(cards.length + " length");
+      console.log(time);
+      if (cards.length < 5 && time <= 259200000) {
         //If timestamp of sales check is less then or equal to a week, run function again to check all sales
 
         fs.appendFileSync(
           "./error.txt",
           "\n" + "Not enough cards listed for " + card.name + " " + " " + card.serialNumber + " " + card.set + " " + card.price
         );
-        return checkForSnipes(card, Date.now());
+
+        if (time == 259200000) {
+          console.log("getting all sales");
+          return checkForSnipes(card, Date.now());
+        }
+        return checkForSnipes(card, 259200000);
       }
 
       //Getting total average price
@@ -222,6 +232,7 @@ function checkForSnipes(card, time) {
       let totalSerialRange = 0;
       let cardsWithinRange = 0;
       let array = [];
+      console.log(cards);
       for (let i = 0; i < cards.length; i++) {
         if (
           parseInt(cards[i].serialNumber) <= parseInt(card.serialNumber) + 500 &&
@@ -233,9 +244,10 @@ function checkForSnipes(card, time) {
         }
       }
 
+      if (array.length == 0) return checkForSnipes(card, Date.now());
       //Check for outlier and remove it, post new average
       let originalAverage = Math.floor(totalSerialRange / cardsWithinRange);
-
+      console.log(array);
       array.sort((a, b) => b.price - a.price);
       card.array = array
         .map((obj) => {
@@ -247,9 +259,12 @@ function checkForSnipes(card, time) {
 
       let newAverage = 0;
       for (let i = 0; i < array.length; i++) {
+        console.log(parseInt(array[i].price));
         newAverage += parseInt(array[i].price);
       }
+      console.log(newAverage);
       newAverage = Math.round(newAverage / array.length);
+      console.log(newAverage);
       card.averageLength = array.length;
       card.rate = originalAverage / newAverage;
       card.serialAverage = originalAverage; // Set card's serial average to the original, if the new one is 3 times lower then set it to the new one.

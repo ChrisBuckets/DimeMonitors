@@ -94,8 +94,11 @@ class discordBot {
             value: card.array.join(),
           }*/
         );
-
-      if (card.test || card.delay) {
+      if (card.test) {
+        let channel = client.channels.cache.get("814674606396538890");
+        return channel.send(embed);
+      }
+      if (card.delay) {
         let channel = client.channels.cache.get("814674606396538890");
         channel.send(embed);
       }
