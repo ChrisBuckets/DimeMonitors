@@ -12,7 +12,7 @@ saveSales().then(function () {
   console.log("Done");
 });
 function latestBlock() {
-  return fcl.send([fcl.getLatestBlock(true)]).then(fcl.decode);
+  return fcl.send([fcl.getLatestBlock(false)]).then(fcl.decode);
 }
 async function saveSales() {
   fcl.config().put("accessNode.api", "https://access-mainnet-beta.onflow.org"); // connect to Flow mainnet

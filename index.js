@@ -20,11 +20,12 @@ console.log(card);*/
 
 startDime();
 
-/*SoldCard.find({ name: "Coby White", setSeries: "2" }, async function (err, cards) {
+/*SoldCard.find({ name: "CJ McCollum", set: "Metallic Gold LE", setSeries: "2" }, async function (err, cards) {
   await startDime();
+
   let card = cards[0];
-  card.serialNumber = "541";
-  card.price = 60;
+  card.serialNumber = "45";
+  card.price = 1400;
   card.test = true;
 
   checkForSnipes(card, 86400000);
@@ -205,23 +206,6 @@ function checkForSnipes(card, time) {
     },
     (err, cards) => {
       if (err) console.log(err);
-      console.log("yo");
-      console.log(cards.length + " length");
-      console.log(time);
-      if (cards.length < 5 && time <= 259200000) {
-        //If timestamp of sales check is less then or equal to a week, run function again to check all sales
-
-        fs.appendFileSync(
-          "./error.txt",
-          "\n" + "Not enough cards listed for " + card.name + " " + " " + card.serialNumber + " " + card.set + " " + card.price
-        );
-
-        if (time == 259200000) {
-          console.log("getting all sales");
-          return checkForSnipes(card, Date.now());
-        }
-        return checkForSnipes(card, 259200000);
-      }
 
       //Getting total average price
       let totalAvg = 0;
@@ -232,43 +216,90 @@ function checkForSnipes(card, time) {
       let totalSerialRange = 0;
       let cardsWithinRange = 0;
       let array = [];
-      console.log(cards);
+      //console.log(cards);
+      //console.log(cards.length);
+      let range = 500;
+
+      if (card.serialNumber < 1000) range = 250;
+
+      if (card.serialNumber < 500) range = 100;
+      if (card.serialNumber < 250) range = 50;
+      if (card.serialNumber < 100) range = 25;
+      if (card.serialNumber < 50) range = 13;
       for (let i = 0; i < cards.length; i++) {
         if (
-          parseInt(cards[i].serialNumber) <= parseInt(card.serialNumber) + 500 &&
-          parseInt(cards[i].serialNumber) >= parseInt(card.serialNumber) - 500
+          parseInt(cards[i].serialNumber) <= parseInt(card.serialNumber) + range &&
+          parseInt(cards[i].serialNumber) >= parseInt(card.serialNumber) - range
         ) {
+          console.log(cards[i]);
           array.push(cards[i]);
           totalSerialRange += parseInt(cards[i].price);
           cardsWithinRange += 1;
         }
       }
 
-      if (array.length == 0) return checkForSnipes(card, Date.now());
+      if (array.length < 5 && time <= 604800000) {
+        //If timestamp of sales check is less then or equal to a week, run function again to check all sales
+
+        /*fs.appendFileSync(
+          "./error.txt",
+          "\n" + "Not enough cards listed for " + card.name + " " + " " + card.serialNumber + " " + card.set + " " + card.price
+        );*/
+
+        if (time == 86400000) {
+          checkForSnipes(card, 259200000);
+          return;
+        }
+
+        if (time == 259200000) {
+          console.log("getting all sales"); //First get sales within last day, then 3 days, then last week, then all time
+          checkForSnipes(card, 604800000);
+          return;
+        }
+
+        if (time == 604800000) {
+          checkForSnipes(card, Date.now());
+          return;
+        }
+
+        //checkForSnipes(card, Date.now());
+      }
+
+      /*if (array.length == 0) { 
+        checkForSnipes(card, Date.now());    Caused memory leak?
+        return;
+      }*/
       //Check for outlier and remove it, post new average
       let originalAverage = Math.floor(totalSerialRange / cardsWithinRange);
+
+      if (card.serialNumber < 250) array.sort((b, a) => b.timestamp - a.timestamp);
+      if (card.serialNumber > 250) array.sort((a, b) => b.price - a.price);
+
       console.log(array);
-      array.sort((a, b) => b.price - a.price);
-      card.array = array
+      console.log(array.length);
+      /*card.array = array
         .map((obj) => {
           return obj.price;
         })
-        .splice(0, 5);
-      console.log(array);
-      if (array.length > 5) array.splice(0, 1);
+        .splice(0, 5);*/
+
+      if (array.length >= 5) {
+        let amount = Math.floor(array.length * 0.2);
+        array.splice(0, amount);
+      }
 
       let newAverage = 0;
       for (let i = 0; i < array.length; i++) {
-        console.log(parseInt(array[i].price));
+        //console.log(parseInt(array[i].price));
         newAverage += parseInt(array[i].price);
       }
-      console.log(newAverage);
+      //console.log(newAverage);
       newAverage = Math.round(newAverage / array.length);
-      console.log(newAverage);
+      //console.log(newAverage);
       card.averageLength = array.length;
       card.rate = originalAverage / newAverage;
       card.serialAverage = originalAverage; // Set card's serial average to the original, if the new one is 3 times lower then set it to the new one.
-      if (originalAverage / newAverage >= 1.5) {
+      if (card.rate >= 1.4 || card.serialNumber < 250) {
         card.serialAverage = newAverage;
       }
 
@@ -296,7 +327,8 @@ function checkForSnipes(card, time) {
       let rangedDifference = parseInt(card.price) / card.serialAverage; //parseInt(card.price) / serialAverage;
       //console.log(array);
       //console.log("AVERAGE PRICE " + average);
-      console.log("card serial average" + card.serialAverage + " average difference " + originalAverage / newAverage);
+      //console.log(array[0].timestamp + " timestamp ");
+      console.log("card serial average" + card.serialAverage + " average difference " + card.rate);
       console.log(
         "SERIAL AVERAGE " +
           totalSerialRange +
@@ -328,7 +360,7 @@ function checkForSnipes(card, time) {
       }
     }
   )
-    .select({ set: 1, setID: 1, playID: 1, name: 1, playCategory: 1, setSeries: 1, price: 1, serialNumber: 1 })
+    .select({ set: 1, timestamp: 1, setID: 1, playID: 1, name: 1, playCategory: 1, setSeries: 1, price: 1, serialNumber: 1 })
     .lean();
 }
 
@@ -364,7 +396,7 @@ function getDiscordChannel(card) {
       }
     }
 
-    if (card.serialNumber <= 50) card.channel = "805658965235990538";
+    //if (card.serialNumber <= 50) card.channel = "805658965235990538";
   }
 
   if (parseInt(card.serialNumber) == 1) {

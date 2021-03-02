@@ -41,7 +41,10 @@ class discordBot {
         .setThumbnail(card.imageLink ? card.imageLink : "attachment://kobe.jpg")
 
         //.attachFiles(logo)
-        .setFooter(`Powered by Dime Monitors | ${Date.now() - card.listTime} ms`, client.user.displayAvatarURL())
+        .setFooter(
+          `Powered by Dime Monitors | ${Date.now() - card.listTime} ms | TS: ${card.getEvents + card.cadence} ms`,
+          client.user.displayAvatarURL()
+        )
         /*.setFooter(
           `Powered by Dime Monitors | ${Date.now() - card.listTime} ms | Cadence: ${card.cadence} | Discord: ${
             Date.now() - card.discordPost
@@ -102,8 +105,8 @@ class discordBot {
         let channel = client.channels.cache.get("814674606396538890");
         channel.send(embed);
       }
-      const timer = (ms) => new Promise((res) => setTimeout(res, ms));
-      if (card.delay) await timer(7500);
+
+      if (card.delay) await new Promise((r) => setTimeout(r, 3500));
 
       if (card.set == "The Gift") {
         console.log("Cool cats");
