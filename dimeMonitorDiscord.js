@@ -98,7 +98,7 @@ class discordBot {
           }*/
         );
       if (card.test) {
-        client.channels.cache.get("814674606396538890").send(embed);
+        return client.channels.cache.get("814674606396538890").send(embed);
       }
       if (card.delay) {
         let channel = client.channels.cache.get("814674606396538890").send(embed);
