@@ -20,12 +20,12 @@ console.log(card);*/
 
 startDime();
 
-/*SoldCard.find({ name: "CJ McCollum", set: "Metallic Gold LE", setSeries: "2" }, async function (err, cards) {
+/*SoldCard.find({ name: "Tyler Herro", set: "Base Set", setSeries: "2" }, async function (err, cards) {
   await startDime();
 
   let card = cards[0];
-  card.serialNumber = "45";
-  card.price = 1400;
+  card.serialNumber = "5000";
+  card.price = 100;
   card.test = true;
 
   checkForSnipes(card, 86400000);
@@ -218,26 +218,29 @@ function checkForSnipes(card, time) {
       let array = [];
       //console.log(cards);
       //console.log(cards.length);
-      let range = 500;
+      card.range = 1000;
+      if (card.serialNumber < 5000) card.range = 500;
+      if (card.serialNumber < 2000) card.range = 200;
+      if (card.serialNumber < 1000) card.range = 250;
 
-      if (card.serialNumber < 1000) range = 250;
-
-      if (card.serialNumber < 500) range = 100;
-      if (card.serialNumber < 250) range = 50;
-      if (card.serialNumber < 100) range = 25;
-      if (card.serialNumber < 50) range = 13;
+      if (card.serialNumber < 500) card.range = 100;
+      if (card.serialNumber < 250) card.range = 50;
+      if (card.serialNumber < 125) card.range = 25;
+      if (card.serialNumber < 50) card.range = 13;
       for (let i = 0; i < cards.length; i++) {
         if (
-          parseInt(cards[i].serialNumber) <= parseInt(card.serialNumber) + range &&
-          parseInt(cards[i].serialNumber) >= parseInt(card.serialNumber) - range
+          parseInt(cards[i].serialNumber) <= parseInt(card.serialNumber) + card.range &&
+          parseInt(cards[i].serialNumber) >= parseInt(card.serialNumber) - card.range
         ) {
           console.log(cards[i]);
           array.push(cards[i]);
           totalSerialRange += parseInt(cards[i].price);
           cardsWithinRange += 1;
         }
-      }
 
+        console.log("DONE PUSHING ARRAY");
+      }
+      console.log("ARRAY" + array.length);
       if (array.length < 5 && time <= 604800000) {
         //If timestamp of sales check is less then or equal to a week, run function again to check all sales
 
@@ -366,22 +369,50 @@ function checkForSnipes(card, time) {
 
 function postCard(card) {
   card.discordPost = Date.now();
-  CardLink.findOne({ setID: card.setID, playID: card.playID }, function (err, cardLink) {
-    if (err) console.log(err);
-    if (cardLink) {
-      card.link = `${cardLink.link}?serialNumber=${card.serialNumber}`;
+  SoldCard.find(
+    {
+      set: card.set,
+      setID: card.setID,
+      playID: card.playID,
+      name: card.name,
+      playCategory: card.playCategory,
+      setSeries: card.setSeries,
+      timestamp: { $gt: Date.now() - 604800000 }, //get sales within a week604800000*/
+    },
+    function (err, cards) {
+      let array = [];
+      for (let i = 0; i < cards.length; i++) {
+        if (
+          parseInt(cards[i].serialNumber) <= parseInt(card.serialNumber) + card.range &&
+          parseInt(cards[i].serialNumber) >= parseInt(card.serialNumber) - card.range
+        ) {
+          array.push(cards[i]);
+          //console.log(array.length);
+        }
+      }
+      //console.log(array.length + "yo");
+      card.volume = array.length;
 
-      card.imageLink = cardLink.imageLink;
-      card.serialMax = cardLink.serialMax;
+      CardLink.findOne({ setID: card.setID, playID: card.playID }, function (err, cardLink) {
+        if (err) console.log(err);
+        if (cardLink) {
+          card.link = `${cardLink.link}?serialNumber=${card.serialNumber}`;
+
+          card.imageLink = cardLink.imageLink;
+          card.serialMax = cardLink.serialMax;
+        }
+        //console.log("posting card");
+        //getDiscordChannel(card);
+        //console.log("posting card");
+        card.delay = false;
+        if (card.serialAverage - card.price >= 350) card.delay = true;
+        //console.log("sending card");
+        dime.sendCard(card);
+      }).lean();
     }
-    console.log("posting card");
-    getDiscordChannel(card);
-    console.log("posting card");
-    card.delay = false;
-    if (card.serialAverage - card.price >= 350) card.delay = true;
-
-    dime.sendCard(card);
-  }).lean();
+  )
+    .select({ set: 1, timestamp: 1, setID: 1, playID: 1, name: 1, playCategory: 1, setSeries: 1, price: 1, serialNumber: 1 })
+    .lean();
 }
 
 function getDiscordChannel(card) {

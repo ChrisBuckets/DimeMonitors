@@ -11285,3 +11285,5 @@ Not enough cards listed for Demar DeRozan  13823 Base Set 43.00000000
 Not enough cards listed for Dejounte Murray  333 Metallic Gold LE 1698.00000000
 Not enough cards listed for Maxi Kleber  6318 Base Set 25.00000000
 TypeError: Cannot read property 'send' of undefined
+TypeError: Cannot read property 'send' of undefined
+TypeError: Cannot read property 'send' of undefined
