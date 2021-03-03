@@ -98,46 +98,92 @@ class discordBot {
           }*/
         );
       if (card.test) {
-        return client.channels.cache.get("814674606396538890").send(embed);
+        client.channels.cache
+          .get("814674606396538890")
+          .send(embed)
+          .catch((err) => {
+            fs.appendFileSync("./error.txt", "\n" + err);
+          });
+        return;
       }
       if (card.delay) {
-        let channel = client.channels.cache.get("814674606396538890").send(embed);
+        client.channels.cache
+          .get("814674606396538890")
+          .send(embed)
+          .catch((err) => {
+            fs.appendFileSync("./error.txt", "\n" + err);
+          });
       }
 
       if (card.delay) await new Promise((r) => setTimeout(r, 3500));
 
       if (card.set == "The Gift") {
         console.log("Cool cats");
-        client.channels.cache.get("810283537097687051").send(embed);
+        client.channels.cache
+          .get("810283537097687051")
+          .send(embed)
+          .catch((err) => {
+            fs.appendFileSync("./error.txt", "\n" + err);
+          });
       }
 
       if (card.set == "Cool Cats") {
         console.log("Cool cats");
-        client.channels.cache.get("811102592460783636").send(embed);
+        client.channels.cache
+          .get("811102592460783636")
+          .send(embed)
+          .catch((err) => {
+            fs.appendFileSync("./error.txt", "\n" + err);
+          });
       }
 
       if (parseInt(card.price) == 1) {
         console.log("Dollar");
-        client.channels.cache.get("805659301128437801").send(embed);
+        client.channels.cache
+          .get("805659301128437801")
+          .send(embed)
+          .catch((err) => {
+            fs.appendFileSync("./error.txt", "\n" + err);
+          });
       }
 
       if (/*card.averagePriceProfit >= 0.1 ||*/ card.averageSerialProfit >= 10) {
-        client.channels.cache.get("805658697556557824").send(embed);
+        client.channels.cache
+          .get("805658697556557824")
+          .send(embed)
+          .catch((err) => {
+            fs.appendFileSync("./error.txt", "\n" + err);
+          });
       }
 
       if (/*card.averagePriceProfit >= 0.2 || */ card.averageSerialProfit >= 20) {
-        client.channels.cache.get("805659038708006935").send(embed);
+        client.channels.cache
+          .get("805659038708006935")
+          .send(embed)
+          .catch((err) => {
+            fs.appendFileSync("./error.txt", "\n" + err);
+          });
       }
 
       if (/*card.averagePriceProfit >= 0.5 ||*/ card.averageSerialProfit >= 40) {
-        client.channels.cache.get("805658965235990538").send(embed);
+        client.channels.cache
+          .get("805658965235990538")
+          .send(embed)
+          .catch((err) => {
+            fs.appendFileSync("./error.txt", "\n" + err);
+          });
       }
 
       console.log("normal channel");
       /*let channel = client.channels.cache.get(card.channel);
       channel.send(embed);*/
       console.log("All channel");
-      client.channels.cache.get("804935899640365056").send(embed);
+      client.channels.cache
+        .get("804935899640365056")
+        .send(embed)
+        .catch((err) => {
+          fs.appendFileSync("./error.txt", "\n" + err);
+        });
     } catch (err) {
       console.log(err);
       fs.appendFileSync("./error.txt", "\n" + err);
