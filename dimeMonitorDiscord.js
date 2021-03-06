@@ -117,10 +117,9 @@ class discordBot {
 
       if (card.delay) await new Promise((r) => setTimeout(r, 3500));
 
-      if (card.set == "The Gift") {
-        console.log("Cool cats");
+      if (card.set == "Seeing Stars") {
         client.channels.cache
-          .get("810283537097687051")
+          .get("817144155645673523")
           .send(embed)
           .catch((err) => {
             fs.appendFileSync("./error.txt", "\n" + err);
@@ -141,6 +140,26 @@ class discordBot {
         console.log("Dollar");
         client.channels.cache
           .get("805659301128437801")
+          .send(embed)
+          .catch((err) => {
+            fs.appendFileSync("./error.txt", "\n" + err);
+          });
+      }
+
+      if (parseInt(card.serialNumber) < 100) {
+        console.log("Dollar");
+        client.channels.cache
+          .get("817884290946826282")
+          .send(embed)
+          .catch((err) => {
+            fs.appendFileSync("./error.txt", "\n" + err);
+          });
+      }
+
+      if (parseInt(card.serialMax) > 30000 && card.set == "Base Set" && card.setSeries == "2") {
+        console.log("Dollar");
+        client.channels.cache
+          .get("817885102100447233")
           .send(embed)
           .catch((err) => {
             fs.appendFileSync("./error.txt", "\n" + err);
@@ -168,6 +187,15 @@ class discordBot {
       if (/*card.averagePriceProfit >= 0.5 ||*/ card.averageSerialProfit >= 40) {
         client.channels.cache
           .get("805658965235990538")
+          .send(embed)
+          .catch((err) => {
+            fs.appendFileSync("./error.txt", "\n" + err);
+          });
+      }
+
+      if (card.serialNumber == 1) {
+        client.channels.cache
+          .get("813534856423800836")
           .send(embed)
           .catch((err) => {
             fs.appendFileSync("./error.txt", "\n" + err);

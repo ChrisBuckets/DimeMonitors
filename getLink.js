@@ -119,6 +119,17 @@ async function goToCard(card, page) {
     setSeries: card.setSeries,
     link: await page.url(),
   });
+  console.log("yo");
+  await page.waitForXPath('//div/div/button[contains(@class, "CollectibleDetails")]/span');
+  let image = await page.$x("//ul//li/img");
+  //console.log(image);
+  let serialMax = await page.$x('//div/div/button[contains(@class, "CollectibleDetails")]/span');
+  let serialMaxText = await page.evaluate((element) => element.innerHTML, serialMax[0]);
+  cardLink.serialMax = serialMaxText;
+  console.log(serialMaxText);
+  let imageLink = await page.evaluate((element) => element.src, image[3]);
+  ('//div/div/button[contains(@class, "CollectibleDetails")]/span');
+  cardLink.imageLink = imageLink;
   cardLink.save(function (err) {
     if (err) return console.log(err);
 
