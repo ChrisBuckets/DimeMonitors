@@ -10,6 +10,7 @@ const cardLinkSchema = require("./Schemas/cardLinkSchema.js");
 const CardLink = mongoose.model("CardLink", cardLinkSchema);
 const fs = require("fs");
 
+const moment = require("moment");
 mongoose.connect("mongodb://localhost/cards", { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true });
 let dime = new discordBot();
 async function startDime() {
@@ -18,9 +19,9 @@ async function startDime() {
 /*let card;
 console.log(card);*/
 
-startDime();
+//startDime();
 
-/*SoldCard.find({ name: "Tyler Herro", set: "Base Set", setSeries: "2" }, async function (err, cards) {
+SoldCard.find({ name: "Tyler Herro", set: "Base Set", setSeries: "2" }, async function (err, cards) {
   await startDime();
 
   let card = cards[0];
@@ -29,7 +30,7 @@ startDime();
   card.test = true;
 
   checkForSnipes(card, 86400000);
-});*/
+});
 // Push to queue, if can get data from cryptoslam send to discord, if not just save to DB
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -39,9 +40,9 @@ db.once("open", function () {
 
 let sales = [];
 
-pollListings().then(function () {
+/*pollListings().then(function () {
   console.log("Done");
-});
+});*/
 
 /*saveSales().then(function () {
   console.log("Done");
@@ -377,21 +378,24 @@ function postCard(card) {
       name: card.name,
       playCategory: card.playCategory,
       setSeries: card.setSeries,
-      timestamp: { $gt: Date.now() - 604800000 }, //get sales within a week604800000*/
+      timestamp: { $gt: Date.now() - 2629800000 }, //get sales within a week604800000*/
     },
     function (err, cards) {
-      let array = [];
+      let weekVolume = [];
+      let monthVolume = [];
       for (let i = 0; i < cards.length; i++) {
         if (
           parseInt(cards[i].serialNumber) <= parseInt(card.serialNumber) + card.range &&
           parseInt(cards[i].serialNumber) >= parseInt(card.serialNumber) - card.range
         ) {
-          array.push(cards[i]);
+          if (cards[i].timestamp > Date.now() - 604800000) weekVolume.push(cards[i]);
+          monthVolume.push({ x: moment(new Date(cards[i].timestamp)).format("MM DD YYYY HH:mm"), y: cards[i].price });
           //console.log(array.length);
         }
       }
       //console.log(array.length + "yo");
-      card.volume = array.length;
+      card.volume = weekVolume.length;
+      card.monthSales = monthVolume;
 
       CardLink.findOne({ setID: card.setID, playID: card.playID }, function (err, cardLink) {
         if (err) console.log(err);

@@ -18,6 +18,7 @@
     "moment": "^2.29.1",
     "mongodb": "^3.6.3",
     "mongoose": "^5.11.14",
-    "puppeteer": "^5.5.0"
+    "puppeteer": "^5.5.0",
+    "quickchart-js": "^1.0.6"
   }
 }

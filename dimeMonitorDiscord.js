@@ -5,6 +5,7 @@ const fs = require("fs");
 const mongoose = require("mongoose");
 const soldCardSchema = require("./Schemas/soldCardSchema.js");
 const SoldCard = mongoose.model("Card", soldCardSchema);
+const QuickChart = require("quickchart-js");
 class discordBot {
   async init() {
     mongoose.connect("mongodb://localhost/cards", { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true });
@@ -25,6 +26,21 @@ class discordBot {
     });
 
     await client.login(config.token);
+    this.testChannel = await client.channels.fetch("814674606396538890");
+    this.seeingStarsChannel = await client.channels.fetch("817144155645673523");
+    this.coolCatsChannel = await client.channels.fetch("811102592460783636");
+    this.allChannel = await client.channels.fetch("804935899640365056");
+    this.serialOneChannel = await client.channels.fetch("813534856423800836");
+    this.fortyPlus = await client.channels.fetch("805658965235990538");
+    this.twentyPlus = await client.channels.fetch("805659038708006935");
+    this.tenPlus = await client.channels.fetch("805658697556557824");
+    this.newBaseSetTwo = await client.channels.fetch("817885102100447233");
+    this.doubleDigit = await client.channels.fetch("817884290946826282");
+    this.dollar = await client.channels.fetch("805659301128437801");
+    this.coolCats = await client.channels.fetch("811102592460783636");
+    this.risingStarsChannel = await client.channels.fetch("818696831524405268");
+
+    this.graphsChannel = await client.channels.fetch("818844774516654080");
   }
 
   async sendCard(card) {
@@ -97,125 +113,210 @@ class discordBot {
             value: card.array.join(),
           }*/
         );
+
       if (card.test) {
-        client.channels.cache
-          .get("814674606396538890")
-          .send(embed)
-          .catch((err) => {
-            fs.appendFileSync("./error.txt", "\n" + err);
-          });
+        let msg = this.testChannel.send(embed).catch((err) => {
+          console.log(err);
+          fs.appendFileSync("./error.txt", "\n" + err);
+        });
+
+        this.postGraph(card, msg, this.testChannel, embed);
         return;
       }
       if (card.delay) {
-        client.channels.cache
-          .get("814674606396538890")
-          .send(embed)
-          .catch((err) => {
-            fs.appendFileSync("./error.txt", "\n" + err);
-          });
+        this.testChannel.send(embed).catch((err) => {
+          console.log(err);
+          fs.appendFileSync("./error.txt", "\n" + err);
+        });
       }
 
       if (card.delay) await new Promise((r) => setTimeout(r, 3500));
 
       if (card.set == "Seeing Stars") {
-        client.channels.cache
-          .get("817144155645673523")
-          .send(embed)
-          .catch((err) => {
-            fs.appendFileSync("./error.txt", "\n" + err);
-          });
+        this.seeingStarsChannel.send(embed).catch((err) => {
+          console.log(err);
+          fs.appendFileSync("./error.txt", "\n" + err);
+        });
       }
 
       if (card.set == "Cool Cats") {
         console.log("Cool cats");
-        client.channels.cache
-          .get("811102592460783636")
-          .send(embed)
-          .catch((err) => {
-            fs.appendFileSync("./error.txt", "\n" + err);
-          });
+        this.coolCats.send(embed).catch((err) => {
+          console.log(err);
+          fs.appendFileSync("./error.txt", "\n" + err);
+        });
       }
 
       if (parseInt(card.price) == 1) {
         console.log("Dollar");
-        client.channels.cache
-          .get("805659301128437801")
-          .send(embed)
-          .catch((err) => {
-            fs.appendFileSync("./error.txt", "\n" + err);
-          });
+        this.dollar.send(embed).catch((err) => {
+          console.log(err);
+          fs.appendFileSync("./error.txt", "\n" + err);
+        });
       }
 
       if (parseInt(card.serialNumber) < 100) {
         console.log("Dollar");
-        client.channels.cache
-          .get("817884290946826282")
-          .send(embed)
-          .catch((err) => {
-            fs.appendFileSync("./error.txt", "\n" + err);
-          });
+        this.doubleDigit.send(embed).catch((err) => {
+          console.log(err);
+          fs.appendFileSync("./error.txt", "\n" + err);
+        });
       }
 
-      if (parseInt(card.serialMax) > 30000 && card.set == "Base Set" && card.setSeries == "2") {
+      if (card.set == "Rising Stars") {
+        console.log("Cool cats");
+        this.risingStarsChannel.send(embed).catch((err) => {
+          console.log(err);
+          fs.appendFileSync("./error.txt", "\n" + err);
+        });
+      }
+
+      if (
+        (card.serialMax.includes("+") &&
+          parseInt(card.serialMax.replace("+", "")) > 30000 &&
+          card.set == "Base Set" &&
+          card.setSeries == "2") ||
+        parseInt(card.serialMax > 30000)
+      ) {
         console.log("Dollar");
-        client.channels.cache
-          .get("817885102100447233")
-          .send(embed)
-          .catch((err) => {
-            fs.appendFileSync("./error.txt", "\n" + err);
-          });
+        this.newBaseSetTwo.send(embed).catch((err) => {
+          console.log(err);
+          fs.appendFileSync("./error.txt", "\n" + err);
+        });
       }
 
       if (/*card.averagePriceProfit >= 0.1 ||*/ card.averageSerialProfit >= 10) {
-        client.channels.cache
-          .get("805658697556557824")
-          .send(embed)
-          .catch((err) => {
-            fs.appendFileSync("./error.txt", "\n" + err);
-          });
+        this.tenPlus.send(embed).catch((err) => {
+          console.log(err);
+          fs.appendFileSync("./error.txt", "\n" + err);
+        });
       }
 
       if (/*card.averagePriceProfit >= 0.2 || */ card.averageSerialProfit >= 20) {
-        client.channels.cache
-          .get("805659038708006935")
-          .send(embed)
-          .catch((err) => {
-            fs.appendFileSync("./error.txt", "\n" + err);
-          });
+        this.twentyPlus.send(embed).catch((err) => {
+          console.log(err);
+          fs.appendFileSync("./error.txt", "\n" + err);
+        });
       }
 
       if (/*card.averagePriceProfit >= 0.5 ||*/ card.averageSerialProfit >= 40) {
-        client.channels.cache
-          .get("805658965235990538")
-          .send(embed)
-          .catch((err) => {
-            fs.appendFileSync("./error.txt", "\n" + err);
-          });
+        this.fortyPlus.send(embed).catch((err) => {
+          console.log(err);
+          fs.appendFileSync("./error.txt", "\n" + err);
+        });
       }
 
       if (card.serialNumber == 1) {
-        client.channels.cache
-          .get("813534856423800836")
-          .send(embed)
-          .catch((err) => {
-            fs.appendFileSync("./error.txt", "\n" + err);
-          });
+        this.serialOneChannel.send(embed).catch((err) => {
+          console.log(err);
+          fs.appendFileSync("./error.txt", "\n" + err);
+        });
       }
 
       console.log("normal channel");
       /*let channel = client.channels.cache.get(card.channel);
       channel.send(embed);*/
       console.log("All channel");
-      client.channels.cache
-        .get("804935899640365056")
-        .send(embed)
-        .catch((err) => {
-          fs.appendFileSync("./error.txt", "\n" + err);
-        });
+      this.allChannel.send(embed).catch((err) => {
+        console.log(err);
+        fs.appendFileSync("./error.txt", "\n" + err);
+      });
     } catch (err) {
       console.log(err);
       fs.appendFileSync("./error.txt", "\n" + err);
     }
+  }
+
+  async postGraph(card, msg, channel, embed) {
+    console.time("time");
+
+    let chart = new QuickChart();
+    chart
+      .setConfig({
+        type: "line",
+        data: {
+          datasets: [
+            {
+              label: "Sales",
+              fill: false,
+              /*lineTension: 0.5,*/
+              radius: 0.1,
+
+              data: card.monthSales,
+            },
+          ],
+        },
+        options: {
+          scales: {
+            xAxes: [
+              {
+                type: "time",
+                time: {
+                  parser: "MM/DD/YYYY HH:mm",
+                },
+                scaleLabel: {
+                  display: true,
+                  labelString: "Date",
+                },
+                gridLines: {
+                  color: "rgba(255, 255, 255, 0.25)",
+                  zeroLineColor: "rgba(255, 255, 255, 0.25)",
+                  display: true,
+                },
+              },
+            ],
+            yAxes: [
+              {
+                scaleLabel: {
+                  display: true,
+                  labelString: "Price",
+                },
+                ticks: {
+                  callback: (val) => {
+                    return "$" + val.toString();
+                  },
+                },
+                gridLines: {
+                  color: "rgba(255, 255, 255, 0.25)",
+                  zeroLineColor: "rgba(255, 255, 255, 0.25)",
+                  display: true,
+                },
+              },
+            ],
+          },
+        },
+      })
+      .setWidth(900)
+      .setHeight(500)
+      .setBackgroundColor("#23272a");
+    card.url = await chart.getShortUrl();
+    console.log(card.url);
+
+    const chartEmbed = new Discord.MessageEmbed();
+    chartEmbed.setTitle("Dime Monitor Chart");
+    chartEmbed.setImage(card.url);
+    chartEmbed.setDescription("Dime Chart");
+    console.log(chartEmbed);
+    let graphMsg = await this.graphsChannel.send(chartEmbed).catch((err) => {
+      console.log(err);
+    });
+
+    msg.then(function (result) {
+      channel.messages
+        .fetch(result.id)
+        .then(function (m) {
+          let embed = m.embeds[0];
+          console.log(embed);
+          embed.fields.splice(embed.fields.length - 1, 0, { value: `[Yo](${graphMsg.url})`, name: "Graph", inline: true });
+          //embed.fields.push({ value: `[Yo](${graphMsg.url})`, name: "Graph", inline: true });
+          m.edit(embed);
+          console.log(m.embeds[0].fields);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
+    console.timeEnd("time");
   }
 }
 
