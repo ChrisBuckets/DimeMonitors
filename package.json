@@ -15,9 +15,11 @@
     "@onflow/sdk": "0.0.44",
     "@onflow/types": "0.0.4",
     "discord.js": "^12.5.1",
+    "graphql": "^15.5.0",
+    "graphql-request": "^3.4.0",
     "moment": "^2.29.1",
     "mongodb": "^3.6.3",
-    "mongoose": "^5.11.14",
+    "mongoose": "^5.11.15",
     "puppeteer": "^5.5.0",
     "quickchart-js": "^1.0.6"
   }

@@ -8,6 +8,9 @@ const soldCardSchema = require("./Schemas/soldCardSchema.js");
 const SoldCard = mongoose.model("Card", soldCardSchema);
 const cardLinkSchema = require("./Schemas/cardLinkSchema.js");
 const CardLink = mongoose.model("CardLink", cardLinkSchema);
+
+const momentLinkSchema = require("./Schemas/momentLinkSchema.js");
+const MomentLink = mongoose.model("MomentLink", momentLinkSchema);
 const fs = require("fs");
 
 const moment = require("moment");
@@ -17,17 +20,17 @@ async function startDime() {
   await dime.init();
 }
 
-startDime();
-/*SoldCard.find({ name: "Tyler Herro", set: "Base Set", setSeries: "2" }, async function (err, cards) {
+//startDime();
+SoldCard.find({ name: "Lonnie Walker IV", set: "Base Set", setSeries: "2" }, async function (err, cards) {
   await startDime();
 
   let card = cards[0];
-  card.serialNumber = "5000";
-  card.price = 100;
+  card.serialNumber = "12255";
+  card.price = 1;
   card.test = true;
 
   checkForSnipes(card, 86400000);
-});*/
+});
 // Push to queue, if can get data from cryptoslam send to discord, if not just save to DB
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -37,9 +40,9 @@ db.once("open", function () {
 
 let sales = [];
 
-pollListings().then(function () {
+/*pollListings().then(function () {
   console.log("Done");
-});
+});*/
 
 /*saveSales().then(function () {
   console.log("Done");
@@ -217,6 +220,7 @@ function checkForSnipes(card, time) {
       //console.log(cards);
       //console.log(cards.length);
       card.range = 1000;
+
       if (card.serialNumber < 5000) card.range = 500;
       if (card.serialNumber < 2000) card.range = 200;
       if (card.serialNumber < 1000) card.range = 250;
@@ -288,7 +292,7 @@ function checkForSnipes(card, time) {
         let amount = Math.floor(array.length * 0.2);
         array.splice(0, amount);
       }
-
+      console.log(array);
       let newAverage = 0;
       for (let i = 0; i < array.length; i++) {
         //console.log(parseInt(array[i].price));
@@ -329,6 +333,7 @@ function checkForSnipes(card, time) {
       //console.log(array);
       //console.log("AVERAGE PRICE " + average);
       //console.log(array[0].timestamp + " timestamp ");
+
       console.log("card serial average" + card.serialAverage + " average difference " + card.rate);
       console.log(
         "SERIAL AVERAGE " +
@@ -402,13 +407,20 @@ function postCard(card) {
           card.imageLink = cardLink.imageLink;
           card.serialMax = cardLink.serialMax;
         }
-        //console.log("posting card");
-        //getDiscordChannel(card);
-        //console.log("posting card");
-        card.delay = false;
-        if (card.serialAverage - card.price >= 350) card.delay = true;
-        //console.log("sending card");
-        dime.sendCard(card);
+
+        card.findLink = Date.now();
+        MomentLink.findOne({ setID: card.setID, playID: card.playID, serialNumber: card.serialNumber }, function (err, momentLink) {
+          if (momentLink) {
+            card.momentLink = `https://nbatopshot.com/moment/${momentLink.serialUUID}`;
+          }
+          //console.log("posting card");
+          //getDiscordChannel(card);
+          //console.log("posting card");
+          card.delay = false;
+          if (card.serialAverage - card.price >= 350) card.delay = true;
+          //console.log("sending card");
+          dime.sendCard(card);
+        });
       }).lean();
     }
   )

@@ -51,14 +51,17 @@ class discordBot {
 
       const embed = new Discord.MessageEmbed()
         .setTitle(card.name)
-        .setURL(card.link ? card.link : "https://nbatopshot.com")
+        //.setURL(card.link ? card.link : "https://nbatopshot.com")
+        .setURL(card.momentLink ? card.momentLink : "https://nbatopshot.com")
         .setAuthor("NBA Topshot")
 
         .setThumbnail(card.imageLink ? card.imageLink : "attachment://kobe.jpg")
 
         //.attachFiles(logo)
         .setFooter(
-          `Powered by Dime Monitors | ${Date.now() - card.listTime} ms | TS: ${card.getEvents + card.cadence} ms`,
+          `Powered by Dime Monitors | ${Date.now() - card.listTime} ms | TS: ${card.getEvents + card.cadence} ms | Link: ${
+            Date.now() - card.findLink
+          } ms`,
           client.user.displayAvatarURL()
         )
         /*.setFooter(
@@ -71,6 +74,7 @@ class discordBot {
         .setColor("#00AAFF")
         .setTimestamp()
         .addFields(
+          { name: "All listings", value: `[View](${card.link})` },
           {
             name: "Set",
             value: `${card.set} (Series ${card.setSeries}) (${card.playCategory})`,
@@ -121,6 +125,8 @@ class discordBot {
         });
 
         messages.push({ message: msg, channel: this.testChannel });
+        return;
+        this.postGraph(card, messages);
       }
       if (card.delay) {
         let msg = this.testChannel.send(embed).catch((err) => {
@@ -256,7 +262,7 @@ class discordBot {
         data: {
           datasets: [
             {
-              label: `${card.name} Serial Range ${card.serialNumber} out of ${card.serialMax}`,
+              label: `${card.name} Serial Range ${card.serialNumber} out of ${card.serialMax} (${card.monthSales.length})`,
               fill: false,
               /*lineTension: 0.5,*/
               radius: 0.1,
@@ -272,6 +278,7 @@ class discordBot {
                 type: "time",
                 time: {
                   parser: "MM/DD/YYYY HH:mm",
+                  unit: "day",
                 },
                 scaleLabel: {
                   display: true,
