@@ -11,6 +11,8 @@ const CardLink = mongoose.model("CardLink", cardLinkSchema);
 
 const momentLinkSchema = require("./Schemas/momentLinkSchema.js");
 const MomentLink = mongoose.model("MomentLink", momentLinkSchema);
+const marketLinkSchema = require("./Schemas/marketLinkSchema.js");
+const MarketLink = mongoose.model("MarketLink", marketLinkSchema);
 const fs = require("fs");
 
 const moment = require("moment");
@@ -401,19 +403,20 @@ function postCard(card) {
       card.volume = weekVolume.length;
       card.monthSales = monthVolume;
 
-      CardLink.findOne({ setID: card.setID, playID: card.playID }, function (err, cardLink) {
+      MarketLink.findOne({ setID: card.setID, playID: card.playID }, function (err, marketLink) {
         if (err) console.log(err);
-        if (cardLink) {
-          card.link = `${cardLink.link}?serialNumber=${card.serialNumber}`;
+        if (marketLink) {
+          card.link = `${marketLink.link}?serialNumber=${card.serialNumber}`;
 
-          card.imageLink = cardLink.imageLink;
-          card.serialMax = cardLink.serialMax;
+          card.imageLink = marketLink.imageLink;
+          card.serialMax = marketLink.serialMax;
         }
 
         card.findLink = Date.now();
         MomentLink.findOne({ setID: card.setID, playID: card.playID, serialNumber: card.serialNumber }, function (err, momentLink) {
           if (momentLink) {
             card.momentLink = `https://nbatopshot.com/moment/${momentLink.serialUUID}`;
+            card.link = `https://nbatopshot.com/listings/p2p/${momentLink.setUUID}+${momentLink.playUUID}`;
           }
           //console.log("posting card");
           //getDiscordChannel(card);

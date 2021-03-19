@@ -125,7 +125,6 @@ class discordBot {
         });
 
         messages.push({ message: msg, channel: this.testChannel });
-
         this.postGraph(card, messages);
       }
       if (card.delay) {
