@@ -20,8 +20,9 @@ async function startDime() {
   await dime.init();
 }
 
-//startDime();
-SoldCard.find({ name: "Lonnie Walker IV", set: "Base Set", setSeries: "2" }, async function (err, cards) {
+startDime();
+
+/*SoldCard.find({ name: "Lonnie Walker IV", set: "Base Set", setSeries: "2" }, async function (err, cards) {
   await startDime();
 
   let card = cards[0];
@@ -30,7 +31,7 @@ SoldCard.find({ name: "Lonnie Walker IV", set: "Base Set", setSeries: "2" }, asy
   card.test = true;
 
   checkForSnipes(card, 86400000);
-});
+});*/
 // Push to queue, if can get data from cryptoslam send to discord, if not just save to DB
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -40,9 +41,9 @@ db.once("open", function () {
 
 let sales = [];
 
-/*pollListings().then(function () {
+pollListings().then(function () {
   console.log("Done");
-});*/
+});
 
 /*saveSales().then(function () {
   console.log("Done");
@@ -65,8 +66,9 @@ async function pollListings(sales) {
   let hwm = (await latestBlock()).height;
   while (1) {
     try {
+      console.log("new loop start");
       await new Promise((r) => setTimeout(r, 400));
-
+      console.log("set timeout finished");
       let startTime = Date.now();
 
       var end = (await latestBlock()).height;

@@ -17,7 +17,7 @@ mongoose.connect("mongodb://localhost/cards", { useNewUrlParser: true, useCreate
 return;*/
 
 async function getSerials() {
-  DirectLink.find({}, async function (err, sets) {
+  DirectLink.find({ set: "2021 All-Star Game" }, async function (err, sets) {
     //for (let i = 0; i < sets.length; i++) {
     for (let i = sets.length - 1; i >= 0; i--) {
       let cursorPosition = "";
@@ -308,17 +308,21 @@ function getSets() {
 
         delete setData.plays[i]["stats"];
       }
-      const directLink = new DirectLink({
-        setID: setData.flowId,
-        setUUID: setData.id,
-        set: setData.flowName,
-        setSeries: setData.flowSeriesNumber,
-        plays: setData.plays,
-      });
-      console.log(directLink);
-      directLink.save(function (err) {
-        if (err) console.log(err);
-        console.log("saved");
+
+      DirectLink.findOne({ set: setData.flowName }, function (err, set) {
+        if (set) return;
+        const directLink = new DirectLink({
+          setID: setData.flowId,
+          setUUID: setData.id,
+          set: setData.flowName,
+          setSeries: setData.flowSeriesNumber,
+          plays: setData.plays,
+        });
+        console.log(directLink);
+        directLink.save(function (err) {
+          if (err) console.log(err);
+          console.log("saved");
+        });
       });
     }
   });
