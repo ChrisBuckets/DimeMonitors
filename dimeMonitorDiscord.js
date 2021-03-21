@@ -3,8 +3,9 @@ const client = new Discord.Client();
 const config = require("./config.json");
 const fs = require("fs");
 const mongoose = require("mongoose");
-const soldCardSchema = require("./Schemas/soldCardSchema.js");
-const SoldCard = mongoose.model("Card", soldCardSchema);
+const marketLinkSchema = require("./Schemas/marketLinkSchema.js");
+const MarketLink = mongoose.model("MarketLink", marketLinkSchema);
+const { request, gql } = require("graphql-request");
 const QuickChart = require("quickchart-js");
 class discordBot {
   async init() {
@@ -60,9 +61,11 @@ class discordBot {
 
         //.attachFiles(logo)
         .setFooter(
-          `Powered by Dime Monitors | ${Date.now() - card.listTime} ms | TS: ${card.getEvents + card.cadence} ms | Ask: ${
+          `Powered by Dime Monitors | ${Date.now() - card.listTime} ms | TS: ${
+            card.getEvents + card.cadence
+          } ms` /*| Ask: ${
             Date.now() - card.findLink
-          } ms`,
+          } ms (${card.lowestAskRequest})`*/,
           client.user.displayAvatarURL()
         )
         /*.setFooter(
@@ -101,7 +104,7 @@ class discordBot {
           },
           {
             name: `Lowest Ask`,
-            value: `$${card.lowestAsk ? parseInt(card.lowestAsk) : "Not found"}`,
+            value: `Fetching..`,
           },
           {
             name: "Undervalued",
@@ -262,14 +265,14 @@ class discordBot {
 
       messages.push({ message: msg, channel: this.allChannel });
 
-      this.postGraph(card, messages);
+      this.updateCard(card, messages);
     } catch (err) {
       console.log(err);
       fs.appendFileSync("./error.txt", "\n" + err);
     }
   }
 
-  async postGraph(card, messages) {
+  async updateCard(card, messages) {
     let chart = new QuickChart(); //Make array of all the send message promises, use promise all to add graph link to each message
     chart
       .setConfig({
@@ -342,6 +345,14 @@ class discordBot {
       console.log(err);
     });
 
+    card.lowestAskStart = Date.now();
+    let lowestAsk = await this.getLowestAsk(card.momentDetails); //Getting lowest ask of card
+
+    if (lowestAsk) {
+      card.lowestAsk = lowestAsk.price;
+      card.lowestAskRequest = lowestAsk.graphql;
+    }
+
     for (let i = 0; i < messages.length; i++) {
       let msg = messages[i].message;
       console.log(msg + " yo");
@@ -359,10 +370,12 @@ class discordBot {
               inline: true,
             });
 
-            /*embed.fields.splice(embed.fields.length - 5, 0, {
-              name: `Lowest Ask`,
-              value: `$${card.lowestAsk ? parseInt(card.lowestAsk) : "Not found"}`,
-            });*/
+            let getLowestAsk = embed.fields.find(function (element) {
+              return element.name == "Lowest Ask";
+            });
+
+            getLowestAsk.value = `$${card.lowestAsk ? parseInt(card.lowestAsk) : "Not found"}`;
+
             //embed.fields.push({ value: `[Yo](${graphMsg.url})`, name: "Graph", inline: true });
             m.edit(embed);
             //console.log(m.embeds[0].fields);
@@ -371,6 +384,217 @@ class discordBot {
             console.log(err);
           });
       });
+    }
+  }
+
+  async getLowestAsk(momentLink) {
+    let marketLink = await MarketLink.findOne({ setID: momentLink.setID, playID: momentLink.playID }).select({
+      setID: 1,
+      playID: 1,
+      lowestAsk: 1,
+    });
+
+    if (marketLink.lowestAsk && Date.now() - marketLink.lowestAsk.lastRequest < 1800000) {
+      console.log("db data returned");
+      return { price: marketLink.lowestAsk.price, graphql: false };
+    }
+
+    const query = gql`
+      query GetUserMomentListingsDedicated($input: GetUserMomentListingsInput!) {
+        getUserMomentListings(input: $input) {
+          data {
+            circulationCount
+            flowRetired
+            version
+            set {
+              id
+              flowName
+              flowSeriesNumber
+              __typename
+            }
+            play {
+              ... on Play {
+                ...PlayDetails
+                __typename
+              }
+              __typename
+            }
+            assetPathPrefix
+            priceRange {
+              min
+              max
+              __typename
+            }
+            momentListings {
+              id
+              moment {
+                id
+                price
+                flowSerialNumber
+                owner {
+                  dapperID
+                  username
+                  profileImageUrl
+                  __typename
+                }
+                setPlay {
+                  ID
+                  flowRetired
+                  __typename
+                }
+                __typename
+              }
+              __typename
+            }
+            momentListingCount
+            __typename
+          }
+          __typename
+        }
+      }
+
+      fragment PlayDetails on Play {
+        id
+        description
+        stats {
+          playerID
+          playerName
+          primaryPosition
+          currentTeamId
+          dateOfMoment
+          jerseyNumber
+          awayTeamName
+          awayTeamScore
+          teamAtMoment
+          homeTeamName
+          homeTeamScore
+          totalYearsExperience
+          teamAtMomentNbaId
+          height
+          weight
+          currentTeam
+          birthplace
+          birthdate
+          awayTeamNbaId
+          draftYear
+          nbaSeason
+          draftRound
+          draftSelection
+          homeTeamNbaId
+          draftTeam
+          draftTeamNbaId
+          playCategory
+          homeTeamScoresByQuarter {
+            quarterScores {
+              type
+              number
+              sequence
+              points
+              __typename
+            }
+            __typename
+          }
+          awayTeamScoresByQuarter {
+            quarterScores {
+              type
+              number
+              sequence
+              points
+              __typename
+            }
+            __typename
+          }
+          __typename
+        }
+        statsPlayerGameScores {
+          blocks
+          points
+          steals
+          assists
+          minutes
+          rebounds
+          turnovers
+          plusMinus
+          flagrantFouls
+          personalFouls
+          playerPosition
+          technicalFouls
+          twoPointsMade
+          blockedAttempts
+          fieldGoalsMade
+          freeThrowsMade
+          threePointsMade
+          defensiveRebounds
+          offensiveRebounds
+          pointsOffTurnovers
+          twoPointsAttempted
+          assistTurnoverRatio
+          fieldGoalsAttempted
+          freeThrowsAttempted
+          twoPointsPercentage
+          fieldGoalsPercentage
+          freeThrowsPercentage
+          threePointsAttempted
+          threePointsPercentage
+          __typename
+        }
+        statsPlayerSeasonAverageScores {
+          minutes
+          blocks
+          points
+          steals
+          assists
+          rebounds
+          turnovers
+          plusMinus
+          flagrantFouls
+          personalFouls
+          technicalFouls
+          twoPointsMade
+          blockedAttempts
+          fieldGoalsMade
+          freeThrowsMade
+          threePointsMade
+          defensiveRebounds
+          offensiveRebounds
+          pointsOffTurnovers
+          twoPointsAttempted
+          assistTurnoverRatio
+          fieldGoalsAttempted
+          freeThrowsAttempted
+          twoPointsPercentage
+          fieldGoalsPercentage
+          freeThrowsPercentage
+          threePointsAttempted
+          threePointsPercentage
+          __typename
+        }
+        __typename
+      }
+    `;
+
+    const variables = {
+      input: {
+        setID: `${momentLink.setUUID}`,
+        playID: `${momentLink.playUUID}`,
+      },
+    };
+    try {
+      console.log("Requesting..");
+      let data = await request("https://api.nbatopshot.com/marketplace/graphql?SearchMintedMomentsForSerialNumberModal", query, variables);
+      let price = data.getUserMomentListings.data.priceRange.min;
+      marketLink.lowestAsk = { price: price, lastRequest: Date.now() };
+      marketLink.save(function (err) {
+        if (err) {
+          console.log(err);
+          return;
+        }
+        console.log("Lowest ask saved");
+        console.log(marketLink);
+      });
+      return { price: price, graphql: true };
+    } catch (err) {
+      console.log(err);
     }
   }
 }

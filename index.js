@@ -417,6 +417,7 @@ function postCard(card) {
           if (momentLink) {
             card.momentLink = `https://nbatopshot.com/moment/${momentLink.serialUUID}`;
             card.link = `https://nbatopshot.com/listings/p2p/${momentLink.setUUID}+${momentLink.playUUID}`;
+            card.momentDetails = momentLink;
           }
           //console.log("posting card");
           //getDiscordChannel(card);
@@ -424,10 +425,14 @@ function postCard(card) {
           card.delay = false;
           if (card.serialAverage - card.price >= 350) card.delay = true;
           //console.log("sending card");
-          card.lowestAskStart = Date.now();
+          /*card.lowestAskStart = Date.now();
           let lowestAsk = await getLowestAsk(momentLink);
-          if (lowestAsk) card.lowestAsk = lowestAsk;
+          if (lowestAsk) {
+            card.lowestAsk = lowestAsk.price;
+            card.lowestAskRequest = lowestAsk.graphql;
+          }*/
           console.log("Sending");
+
           dime.sendCard(card);
         });
       }).lean();
@@ -455,217 +460,6 @@ function getDiscordChannel(card) {
   if (parseInt(card.serialNumber) == 1) {
     console.log("1 serial number");
     card.channel = "813534856423800836";
-  }
-}
-
-async function getLowestAsk(momentLink) {
-  let marketLink = await MarketLink.findOne({ setID: momentLink.setID, playID: momentLink.playID }).select({
-    setID: 1,
-    playID: 1,
-    lowestAsk: 1,
-  });
-
-  if (marketLink.lowestAsk && Date.now() - marketLink.lowestAsk.lastRequest < 1800000) {
-    console.log("db data returned");
-    return marketLink.lowestAsk.price;
-  }
-
-  const query = gql`
-    query GetUserMomentListingsDedicated($input: GetUserMomentListingsInput!) {
-      getUserMomentListings(input: $input) {
-        data {
-          circulationCount
-          flowRetired
-          version
-          set {
-            id
-            flowName
-            flowSeriesNumber
-            __typename
-          }
-          play {
-            ... on Play {
-              ...PlayDetails
-              __typename
-            }
-            __typename
-          }
-          assetPathPrefix
-          priceRange {
-            min
-            max
-            __typename
-          }
-          momentListings {
-            id
-            moment {
-              id
-              price
-              flowSerialNumber
-              owner {
-                dapperID
-                username
-                profileImageUrl
-                __typename
-              }
-              setPlay {
-                ID
-                flowRetired
-                __typename
-              }
-              __typename
-            }
-            __typename
-          }
-          momentListingCount
-          __typename
-        }
-        __typename
-      }
-    }
-
-    fragment PlayDetails on Play {
-      id
-      description
-      stats {
-        playerID
-        playerName
-        primaryPosition
-        currentTeamId
-        dateOfMoment
-        jerseyNumber
-        awayTeamName
-        awayTeamScore
-        teamAtMoment
-        homeTeamName
-        homeTeamScore
-        totalYearsExperience
-        teamAtMomentNbaId
-        height
-        weight
-        currentTeam
-        birthplace
-        birthdate
-        awayTeamNbaId
-        draftYear
-        nbaSeason
-        draftRound
-        draftSelection
-        homeTeamNbaId
-        draftTeam
-        draftTeamNbaId
-        playCategory
-        homeTeamScoresByQuarter {
-          quarterScores {
-            type
-            number
-            sequence
-            points
-            __typename
-          }
-          __typename
-        }
-        awayTeamScoresByQuarter {
-          quarterScores {
-            type
-            number
-            sequence
-            points
-            __typename
-          }
-          __typename
-        }
-        __typename
-      }
-      statsPlayerGameScores {
-        blocks
-        points
-        steals
-        assists
-        minutes
-        rebounds
-        turnovers
-        plusMinus
-        flagrantFouls
-        personalFouls
-        playerPosition
-        technicalFouls
-        twoPointsMade
-        blockedAttempts
-        fieldGoalsMade
-        freeThrowsMade
-        threePointsMade
-        defensiveRebounds
-        offensiveRebounds
-        pointsOffTurnovers
-        twoPointsAttempted
-        assistTurnoverRatio
-        fieldGoalsAttempted
-        freeThrowsAttempted
-        twoPointsPercentage
-        fieldGoalsPercentage
-        freeThrowsPercentage
-        threePointsAttempted
-        threePointsPercentage
-        __typename
-      }
-      statsPlayerSeasonAverageScores {
-        minutes
-        blocks
-        points
-        steals
-        assists
-        rebounds
-        turnovers
-        plusMinus
-        flagrantFouls
-        personalFouls
-        technicalFouls
-        twoPointsMade
-        blockedAttempts
-        fieldGoalsMade
-        freeThrowsMade
-        threePointsMade
-        defensiveRebounds
-        offensiveRebounds
-        pointsOffTurnovers
-        twoPointsAttempted
-        assistTurnoverRatio
-        fieldGoalsAttempted
-        freeThrowsAttempted
-        twoPointsPercentage
-        fieldGoalsPercentage
-        freeThrowsPercentage
-        threePointsAttempted
-        threePointsPercentage
-        __typename
-      }
-      __typename
-    }
-  `;
-
-  const variables = {
-    input: {
-      setID: `${momentLink.setUUID}`,
-      playID: `${momentLink.playUUID}`,
-    },
-  };
-  try {
-    console.log("Requesting..");
-    let data = await request("https://api.nbatopshot.com/marketplace/graphql?SearchMintedMomentsForSerialNumberModal", query, variables);
-    let price = data.getUserMomentListings.data.priceRange.min;
-    marketLink.lowestAsk = { price: price, lastRequest: Date.now() };
-    marketLink.save(function (err) {
-      if (err) {
-        console.log(err);
-        return;
-      }
-      console.log("Lowest ask saved");
-      console.log(marketLink);
-    });
-    return price;
-  } catch (err) {
-    console.log(err);
   }
 }
 

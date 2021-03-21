@@ -13,3 +13,101 @@ TypeError: Cannot read property 'includes' of undefined
 TypeError: Cannot read property 'includes' of undefined
 TypeError: Cannot read property 'includes' of undefined
 TypeError: Cannot read property 'includes' of undefined
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '6053d06e54ad7c3d7c6236d2', 'setID': 36, 'setUUID': 'b2605806-0d47-439f-ba72-784897470bb0', 'set': '2021 All-Star Game', 'playID': 846, 'playUUID': '0d9666e3-3268-4a97-8c9f-4b4c6e8c90a2', 'serialUUID': '9e263022-3a69-43c0-b93a-3e08bbc597f1', 'serialNumber': '1904', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '6053d06e54ad7c3d7c6236d2', 'setID': 36, 'setUUID': 'b2605806-0d47-439f-ba72-784897470bb0', 'set': '2021 All-Star Game', 'playID': 846, 'playUUID': '0d9666e3-3268-4a97-8c9f-4b4c6e8c90a2', 'serialUUID': '9e263022-3a69-43c0-b93a-3e08bbc597f1', 'serialNumber': '1904', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '6053d06e54ad7c3d7c6236d2', 'setID': 36, 'setUUID': 'b2605806-0d47-439f-ba72-784897470bb0', 'set': '2021 All-Star Game', 'playID': 846, 'playUUID': '0d9666e3-3268-4a97-8c9f-4b4c6e8c90a2', 'serialUUID': '9e263022-3a69-43c0-b93a-3e08bbc597f1', 'serialNumber': '1904', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60526412fd6962223c72fc13', 'setID': 29, 'setUUID': '33a4a3a3-a32c-4925-a4e8-7d24e56b105e', 'set': 'Metallic Gold LE', 'playID': 569, 'playUUID': '69407d7c-cac9-4f48-bceb-d1103121c899', 'serialUUID': '4d03d290-d80b-441b-987a-83810a08f477', 'serialNumber': '62', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60526412fd6962223c72fc13', 'setID': 29, 'setUUID': '33a4a3a3-a32c-4925-a4e8-7d24e56b105e', 'set': 'Metallic Gold LE', 'playID': 569, 'playUUID': '69407d7c-cac9-4f48-bceb-d1103121c899', 'serialUUID': '4d03d290-d80b-441b-987a-83810a08f477', 'serialNumber': '62', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60526f98fd6962223c973e39', 'setID': 26, 'setUUID': '208ae30a-a4fe-42d4-9e51-e6fd1ad2a7a9', 'set': 'Base Set', 'playID': 658, 'playUUID': 'b974df71-cdd5-45ff-a7f3-a6fc5d7e5f66', 'serialUUID': '4bf98c35-0ff5-48a2-9565-32d7c6430a02', 'serialNumber': '2582', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '605263bffd6962223c720f77', 'setID': 32, 'setUUID': 'ad8e85a4-2240-4604-95f6-be826966d988', 'set': 'Cool Cats', 'playID': 618, 'playUUID': 'fb990e87-2314-4616-ad16-5ee2a5350fd7', 'serialUUID': '63efa469-ce70-4f81-930f-c10cff9fab1a', 'serialNumber': '1424', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60526412fd6962223c72fc13', 'setID': 29, 'setUUID': '33a4a3a3-a32c-4925-a4e8-7d24e56b105e', 'set': 'Metallic Gold LE', 'playID': 569, 'playUUID': '69407d7c-cac9-4f48-bceb-d1103121c899', 'serialUUID': '4d03d290-d80b-441b-987a-83810a08f477', 'serialNumber': '62', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60526412fd6962223c72fc13', 'setID': 29, 'setUUID': '33a4a3a3-a32c-4925-a4e8-7d24e56b105e', 'set': 'Metallic Gold LE', 'playID': 569, 'playUUID': '69407d7c-cac9-4f48-bceb-d1103121c899', 'serialUUID': '4d03d290-d80b-441b-987a-83810a08f477', 'serialNumber': '62', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60526f98fd6962223c973e39', 'setID': 26, 'setUUID': '208ae30a-a4fe-42d4-9e51-e6fd1ad2a7a9', 'set': 'Base Set', 'playID': 658, 'playUUID': 'b974df71-cdd5-45ff-a7f3-a6fc5d7e5f66', 'serialUUID': '4bf98c35-0ff5-48a2-9565-32d7c6430a02', 'serialNumber': '2582', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60526f98fd6962223c973e39', 'setID': 26, 'setUUID': '208ae30a-a4fe-42d4-9e51-e6fd1ad2a7a9', 'set': 'Base Set', 'playID': 658, 'playUUID': 'b974df71-cdd5-45ff-a7f3-a6fc5d7e5f66', 'serialUUID': '4bf98c35-0ff5-48a2-9565-32d7c6430a02', 'serialNumber': '2582', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60527cb8fd6962223cc07c74', 'setID': 2, 'setUUID': '7b797690-5b53-45a7-b972-bd2d5152654a', 'set': 'Base Set', 'playID': 100, 'playUUID': '9939a2dc-7c95-4c02-b747-9fee26c9d040', 'serialUUID': '359d94bf-e475-4589-bbf9-27837d8ac49f', 'serialNumber': '1357', 'setSeries': '1', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60527cb8fd6962223cc07c74', 'setID': 2, 'setUUID': '7b797690-5b53-45a7-b972-bd2d5152654a', 'set': 'Base Set', 'playID': 100, 'playUUID': '9939a2dc-7c95-4c02-b747-9fee26c9d040', 'serialUUID': '359d94bf-e475-4589-bbf9-27837d8ac49f', 'serialNumber': '1357', 'setSeries': '1', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '605263bffd6962223c720f77', 'setID': 32, 'setUUID': 'ad8e85a4-2240-4604-95f6-be826966d988', 'set': 'Cool Cats', 'playID': 618, 'playUUID': 'fb990e87-2314-4616-ad16-5ee2a5350fd7', 'serialUUID': '63efa469-ce70-4f81-930f-c10cff9fab1a', 'serialNumber': '1424', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '605263bffd6962223c720f77', 'setID': 32, 'setUUID': 'ad8e85a4-2240-4604-95f6-be826966d988', 'set': 'Cool Cats', 'playID': 618, 'playUUID': 'fb990e87-2314-4616-ad16-5ee2a5350fd7', 'serialUUID': '63efa469-ce70-4f81-930f-c10cff9fab1a', 'serialNumber': '1424', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60527eecfd6962223cc76b71', 'setID': 35, 'setUUID': 'f493db4a-a775-4d6e-be8a-56fae509a92d', 'set': 'Rising Stars', 'playID': 823, 'playUUID': '512bbf17-a10b-4521-88e4-a9a2faaf0901', 'serialUUID': '7de5988e-abbf-45ca-8f12-9f5fc7663c6b', 'serialNumber': '1262', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '6053d09154ad7c3d7c62a73e', 'setID': 36, 'setUUID': 'b2605806-0d47-439f-ba72-784897470bb0', 'set': '2021 All-Star Game', 'playID': 836, 'playUUID': '516deb2f-8951-44fc-9b0f-19e3107fc041', 'serialUUID': '6cd611fd-36fd-4318-8cdf-fe085b4e4393', 'serialNumber': '369', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '6053d09154ad7c3d7c62a73e', 'setID': 36, 'setUUID': 'b2605806-0d47-439f-ba72-784897470bb0', 'set': '2021 All-Star Game', 'playID': 836, 'playUUID': '516deb2f-8951-44fc-9b0f-19e3107fc041', 'serialUUID': '6cd611fd-36fd-4318-8cdf-fe085b4e4393', 'serialNumber': '369', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60526513fd6962223c762599', 'setID': 26, 'setUUID': '208ae30a-a4fe-42d4-9e51-e6fd1ad2a7a9', 'set': 'Base Set', 'playID': 726, 'playUUID': 'b9d28da0-d5e7-42ff-afa1-edd9f46c29d4', 'serialUUID': '640a79b8-87bb-452c-b6f5-2d080562eefa', 'serialNumber': '31340', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60526513fd6962223c762599', 'setID': 26, 'setUUID': '208ae30a-a4fe-42d4-9e51-e6fd1ad2a7a9', 'set': 'Base Set', 'playID': 726, 'playUUID': 'b9d28da0-d5e7-42ff-afa1-edd9f46c29d4', 'serialUUID': '640a79b8-87bb-452c-b6f5-2d080562eefa', 'serialNumber': '31340', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60527eecfd6962223cc76b71', 'setID': 35, 'setUUID': 'f493db4a-a775-4d6e-be8a-56fae509a92d', 'set': 'Rising Stars', 'playID': 823, 'playUUID': '512bbf17-a10b-4521-88e4-a9a2faaf0901', 'serialUUID': '7de5988e-abbf-45ca-8f12-9f5fc7663c6b', 'serialNumber': '1262', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '6053d09154ad7c3d7c62a73e', 'setID': 36, 'setUUID': 'b2605806-0d47-439f-ba72-784897470bb0', 'set': '2021 All-Star Game', 'playID': 836, 'playUUID': '516deb2f-8951-44fc-9b0f-19e3107fc041', 'serialUUID': '6cd611fd-36fd-4318-8cdf-fe085b4e4393', 'serialNumber': '369', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60526513fd6962223c762599', 'setID': 26, 'setUUID': '208ae30a-a4fe-42d4-9e51-e6fd1ad2a7a9', 'set': 'Base Set', 'playID': 726, 'playUUID': 'b9d28da0-d5e7-42ff-afa1-edd9f46c29d4', 'serialUUID': '640a79b8-87bb-452c-b6f5-2d080562eefa', 'serialNumber': '31340', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60527b6bfd6962223cbc9a35', 'setID': 2, 'setUUID': '7b797690-5b53-45a7-b972-bd2d5152654a', 'set': 'Base Set', 'playID': 313, 'playUUID': 'b8f44af1-3464-4eb2-b69e-aed7bc2a78ac', 'serialUUID': 'f5385d97-4f2e-40fd-bd0a-c0b985a6fc6f', 'serialNumber': '1404', 'setSeries': '1', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60527b6bfd6962223cbc9a35', 'setID': 2, 'setUUID': '7b797690-5b53-45a7-b972-bd2d5152654a', 'set': 'Base Set', 'playID': 313, 'playUUID': 'b8f44af1-3464-4eb2-b69e-aed7bc2a78ac', 'serialUUID': 'f5385d97-4f2e-40fd-bd0a-c0b985a6fc6f', 'serialNumber': '1404', 'setSeries': '1', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60526ae8fd6962223c8965ef', 'setID': 26, 'setUUID': '208ae30a-a4fe-42d4-9e51-e6fd1ad2a7a9', 'set': 'Base Set', 'playID': 718, 'playUUID': 'f2ff128f-99d4-491b-a77a-d6f96676b3a3', 'serialUUID': '22ab38b7-4432-425c-8919-b8dad351984a', 'serialNumber': '7244', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60526ae8fd6962223c8965ef', 'setID': 26, 'setUUID': '208ae30a-a4fe-42d4-9e51-e6fd1ad2a7a9', 'set': 'Base Set', 'playID': 718, 'playUUID': 'f2ff128f-99d4-491b-a77a-d6f96676b3a3', 'serialUUID': '22ab38b7-4432-425c-8919-b8dad351984a', 'serialNumber': '7244', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60526ae8fd6962223c8965ef', 'setID': 26, 'setUUID': '208ae30a-a4fe-42d4-9e51-e6fd1ad2a7a9', 'set': 'Base Set', 'playID': 718, 'playUUID': 'f2ff128f-99d4-491b-a77a-d6f96676b3a3', 'serialUUID': '22ab38b7-4432-425c-8919-b8dad351984a', 'serialNumber': '7244', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60526ae8fd6962223c8965ef', 'setID': 26, 'setUUID': '208ae30a-a4fe-42d4-9e51-e6fd1ad2a7a9', 'set': 'Base Set', 'playID': 718, 'playUUID': 'f2ff128f-99d4-491b-a77a-d6f96676b3a3', 'serialUUID': '22ab38b7-4432-425c-8919-b8dad351984a', 'serialNumber': '7244', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60526ae8fd6962223c8965ef', 'setID': 26, 'setUUID': '208ae30a-a4fe-42d4-9e51-e6fd1ad2a7a9', 'set': 'Base Set', 'playID': 718, 'playUUID': 'f2ff128f-99d4-491b-a77a-d6f96676b3a3', 'serialUUID': '22ab38b7-4432-425c-8919-b8dad351984a', 'serialNumber': '7244', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60527393fd6962223ca49072', 'setID': 26, 'setUUID': '208ae30a-a4fe-42d4-9e51-e6fd1ad2a7a9', 'set': 'Base Set', 'playID': 535, 'playUUID': '6cb406b3-d3db-4bc4-9e53-f0871288d456', 'serialUUID': 'b3383511-0a5a-4cfe-aaec-15920e1ab2dc', 'serialNumber': '11599', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60527393fd6962223ca49072', 'setID': 26, 'setUUID': '208ae30a-a4fe-42d4-9e51-e6fd1ad2a7a9', 'set': 'Base Set', 'playID': 535, 'playUUID': '6cb406b3-d3db-4bc4-9e53-f0871288d456', 'serialUUID': 'b3383511-0a5a-4cfe-aaec-15920e1ab2dc', 'serialNumber': '11599', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '6052795ffd6962223cb83eef', 'setID': 26, 'setUUID': '208ae30a-a4fe-42d4-9e51-e6fd1ad2a7a9', 'set': 'Base Set', 'playID': 401, 'playUUID': '2d0fe5aa-617a-4492-89d2-faa125e4b196', 'serialUUID': '79af2700-d635-467d-bbaf-d935aec005bd', 'serialNumber': '6452', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '6052795ffd6962223cb83eef', 'setID': 26, 'setUUID': '208ae30a-a4fe-42d4-9e51-e6fd1ad2a7a9', 'set': 'Base Set', 'playID': 401, 'playUUID': '2d0fe5aa-617a-4492-89d2-faa125e4b196', 'serialUUID': '79af2700-d635-467d-bbaf-d935aec005bd', 'serialNumber': '6452', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60527faafd6962223cc9dc81', 'setID': 34, 'setUUID': '122b048d-585e-4c63-8275-c23949576fd6', 'set': 'Seeing Stars', 'playID': 800, 'playUUID': '7c7ee108-fbc6-4c45-9eed-243dfe6e7a85', 'serialUUID': 'cb5b7a88-ffd1-454c-91e2-ac7307ec64cd', 'serialNumber': '3089', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60527faafd6962223cc9dc81', 'setID': 34, 'setUUID': '122b048d-585e-4c63-8275-c23949576fd6', 'set': 'Seeing Stars', 'playID': 800, 'playUUID': '7c7ee108-fbc6-4c45-9eed-243dfe6e7a85', 'serialUUID': 'cb5b7a88-ffd1-454c-91e2-ac7307ec64cd', 'serialNumber': '3089', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60527faafd6962223cc9dc81', 'setID': 34, 'setUUID': '122b048d-585e-4c63-8275-c23949576fd6', 'set': 'Seeing Stars', 'playID': 800, 'playUUID': '7c7ee108-fbc6-4c45-9eed-243dfe6e7a85', 'serialUUID': 'cb5b7a88-ffd1-454c-91e2-ac7307ec64cd', 'serialNumber': '3089', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60527f01fd6962223cc7a8d5', 'setID': 35, 'setUUID': 'f493db4a-a775-4d6e-be8a-56fae509a92d', 'set': 'Rising Stars', 'playID': 821, 'playUUID': 'a6164808-6a5e-4ae5-85cd-b0a41bf2572e', 'serialUUID': 'f99ab854-a61b-43ef-b796-57d6a0dcc860', 'serialNumber': '810', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60527f01fd6962223cc7a8d5', 'setID': 35, 'setUUID': 'f493db4a-a775-4d6e-be8a-56fae509a92d', 'set': 'Rising Stars', 'playID': 821, 'playUUID': 'a6164808-6a5e-4ae5-85cd-b0a41bf2572e', 'serialUUID': 'f99ab854-a61b-43ef-b796-57d6a0dcc860', 'serialNumber': '810', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60527f01fd6962223cc7a8d5', 'setID': 35, 'setUUID': 'f493db4a-a775-4d6e-be8a-56fae509a92d', 'set': 'Rising Stars', 'playID': 821, 'playUUID': 'a6164808-6a5e-4ae5-85cd-b0a41bf2572e', 'serialUUID': 'f99ab854-a61b-43ef-b796-57d6a0dcc860', 'serialNumber': '810', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '605279acfd6962223cb93e34', 'setID': 26, 'setUUID': '208ae30a-a4fe-42d4-9e51-e6fd1ad2a7a9', 'set': 'Base Set', 'playID': 404, 'playUUID': '183cc44b-a768-4ef5-9e63-1acff06653fd', 'serialUUID': '67ae21e3-1eec-46ca-80de-42199bb43423', 'serialNumber': '3301', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60526413fd6962223c72feff', 'setID': 29, 'setUUID': '33a4a3a3-a32c-4925-a4e8-7d24e56b105e', 'set': 'Metallic Gold LE', 'playID': 584, 'playUUID': '5360289f-9f6b-4901-a699-e862395afce0', 'serialUUID': '480db88d-3de0-4e3c-b19c-e29d57346b02', 'serialNumber': '311', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '6053d08054ad7c3d7c627096', 'setID': 36, 'setUUID': 'b2605806-0d47-439f-ba72-784897470bb0', 'set': '2021 All-Star Game', 'playID': 842, 'playUUID': 'f5017b05-71ad-4ee3-aa28-447e685a0584', 'serialUUID': '6a33e249-0651-4739-ae27-715529f23db3', 'serialNumber': '524', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60526413fd6962223c72feff', 'setID': 29, 'setUUID': '33a4a3a3-a32c-4925-a4e8-7d24e56b105e', 'set': 'Metallic Gold LE', 'playID': 584, 'playUUID': '5360289f-9f6b-4901-a699-e862395afce0', 'serialUUID': '480db88d-3de0-4e3c-b19c-e29d57346b02', 'serialNumber': '311', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60526413fd6962223c72feff', 'setID': 29, 'setUUID': '33a4a3a3-a32c-4925-a4e8-7d24e56b105e', 'set': 'Metallic Gold LE', 'playID': 584, 'playUUID': '5360289f-9f6b-4901-a699-e862395afce0', 'serialUUID': '480db88d-3de0-4e3c-b19c-e29d57346b02', 'serialNumber': '311', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '6053d08054ad7c3d7c627096', 'setID': 36, 'setUUID': 'b2605806-0d47-439f-ba72-784897470bb0', 'set': '2021 All-Star Game', 'playID': 842, 'playUUID': 'f5017b05-71ad-4ee3-aa28-447e685a0584', 'serialUUID': '6a33e249-0651-4739-ae27-715529f23db3', 'serialNumber': '524', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '6053d08054ad7c3d7c627096', 'setID': 36, 'setUUID': 'b2605806-0d47-439f-ba72-784897470bb0', 'set': '2021 All-Star Game', 'playID': 842, 'playUUID': 'f5017b05-71ad-4ee3-aa28-447e685a0584', 'serialUUID': '6a33e249-0651-4739-ae27-715529f23db3', 'serialNumber': '524', 'setSeries': '2', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60527b7cfd6962223cbcc80f', 'setID': 2, 'setUUID': '7b797690-5b53-45a7-b972-bd2d5152654a', 'set': 'Base Set', 'playID': 286, 'playUUID': '41c06593-8fdd-4d38-8766-02fb5dc42d9e', 'serialUUID': '3beadc1e-af55-4a7a-978e-012f9aaeb848', 'serialNumber': '1142', 'setSeries': '1', '__v': 0}" as string.
+DiscordAPIError: Invalid Form Body
+embed.url: Could not interpret "{'_id': '60527b7cfd6962223cbcc80f', 'setID': 2, 'setUUID': '7b797690-5b53-45a7-b972-bd2d5152654a', 'set': 'Base Set', 'playID': 286, 'playUUID': '41c06593-8fdd-4d38-8766-02fb5dc42d9e', 'serialUUID': '3beadc1e-af55-4a7a-978e-012f9aaeb848', 'serialNumber': '1142', 'setSeries': '1', '__v': 0}" as string.
