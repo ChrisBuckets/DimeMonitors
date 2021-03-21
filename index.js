@@ -459,7 +459,12 @@ function getDiscordChannel(card) {
 }
 
 async function getLowestAsk(momentLink) {
-  let marketLink = await MarketLink.findOne({ setID: momentLink.setID, playID: momentLink.playID }); //.select({ setID: 1, playID: 1 }).lean();
+  let marketLink = await MarketLink.findOne({ setID: momentLink.setID, playID: momentLink.playID }).select({
+    setID: 1,
+    playID: 1,
+    lowestAsk: 1,
+  });
+
   if (marketLink.lowestAsk && Date.now() - marketLink.lowestAsk.lastRequest < 1800000) {
     console.log("db data returned");
     return marketLink.lowestAsk.price;
