@@ -14,7 +14,7 @@ const MomentLink = mongoose.model("MomentLink", momentLinkSchema);
 const marketLinkSchema = require("./Schemas/marketLinkSchema.js");
 const MarketLink = mongoose.model("MarketLink", marketLinkSchema);
 const fs = require("fs");
-
+const { request, gql } = require("graphql-request");
 const moment = require("moment");
 mongoose.connect("mongodb://localhost/cards", { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true });
 let dime = new discordBot();
@@ -24,12 +24,13 @@ async function startDime() {
 
 startDime();
 
-/*SoldCard.find({ name: "Lonnie Walker IV", set: "Base Set", setSeries: "2" }, async function (err, cards) {
+/*SoldCard.find({ name: "Terry Rozier", set: "Metallic Gold LE", setSeries: "2" }, async function (err, cards) {
   await startDime();
 
   let card = cards[0];
-  card.serialNumber = "12255";
-  card.price = 1;
+  card.serialNumber = "136";
+  card.price = 1000;
+
   card.test = true;
 
   checkForSnipes(card, 86400000);
@@ -40,9 +41,7 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", function () {
   console.log("db connected!");
 });
-
 let sales = [];
-
 pollListings().then(function () {
   console.log("Done");
 });
@@ -189,7 +188,7 @@ async function getCard(data, address, momentIDs, hwm, startTime, j, length, getE
       card.count = j + "/" + length;
       card.getEvents = getEvents;
       card.timestamp = Date.now();
-      checkForSnipes(card, 86400000); //259200000
+      checkForSnipes(card, 86400000); //259200000 86400000
     });
   } catch (err) {
     console.log(err);
@@ -223,8 +222,9 @@ function checkForSnipes(card, time) {
       let array = [];
       //console.log(cards);
       //console.log(cards.length);
-      card.range = 1000;
-
+      card.range = 4000;
+      if (card.serialNumber < 15000) card.range = 2000;
+      if (card.serialNumber < 8000) card.range = 1000;
       if (card.serialNumber < 5000) card.range = 500;
       if (card.serialNumber < 2000) card.range = 200;
       if (card.serialNumber < 1000) card.range = 250;
@@ -255,7 +255,7 @@ function checkForSnipes(card, time) {
           "\n" + "Not enough cards listed for " + card.name + " " + " " + card.serialNumber + " " + card.set + " " + card.price
         );*/
 
-        if (time == 86400000) {
+        if (time <= 86400000) {
           checkForSnipes(card, 259200000);
           return;
         }
@@ -366,6 +366,7 @@ function checkForSnipes(card, time) {
 
         //console.log(card);
         card.checkForSnipes = Date.now() - card.checkForSnipes + " " + cards.length;
+
         postCard(card);
       }
     }
@@ -402,7 +403,6 @@ function postCard(card) {
       //console.log(array.length + "yo");
       card.volume = weekVolume.length;
       card.monthSales = monthVolume;
-
       MarketLink.findOne({ setID: card.setID, playID: card.playID }, function (err, marketLink) {
         if (err) console.log(err);
         if (marketLink) {
@@ -413,7 +413,7 @@ function postCard(card) {
         }
 
         card.findLink = Date.now();
-        MomentLink.findOne({ setID: card.setID, playID: card.playID, serialNumber: card.serialNumber }, function (err, momentLink) {
+        MomentLink.findOne({ setID: card.setID, playID: card.playID, serialNumber: card.serialNumber }, async function (err, momentLink) {
           if (momentLink) {
             card.momentLink = `https://nbatopshot.com/moment/${momentLink.serialUUID}`;
             card.link = `https://nbatopshot.com/listings/p2p/${momentLink.setUUID}+${momentLink.playUUID}`;
@@ -424,6 +424,10 @@ function postCard(card) {
           card.delay = false;
           if (card.serialAverage - card.price >= 350) card.delay = true;
           //console.log("sending card");
+          card.lowestAskStart = Date.now();
+          let lowestAsk = await getLowestAsk(momentLink);
+          if (lowestAsk) card.lowestAsk = lowestAsk;
+          console.log("Sending");
           dime.sendCard(card);
         });
       }).lean();
@@ -453,6 +457,213 @@ function getDiscordChannel(card) {
     card.channel = "813534856423800836";
   }
 }
+
+async function getLowestAsk(momentLink) {
+  let marketLink = await MarketLink.findOne({ setID: momentLink.setID, playID: momentLink.playID }); //.select({ setID: 1, playID: 1 }).lean();
+  if (marketLink.lowestAsk && Date.now() - marketLink.lowestAsk.lastRequest < 1800000) {
+    console.log("db data returned");
+    return marketLink.lowestAsk.price;
+  }
+
+  const query = gql`
+    query GetUserMomentListingsDedicated($input: GetUserMomentListingsInput!) {
+      getUserMomentListings(input: $input) {
+        data {
+          circulationCount
+          flowRetired
+          version
+          set {
+            id
+            flowName
+            flowSeriesNumber
+            __typename
+          }
+          play {
+            ... on Play {
+              ...PlayDetails
+              __typename
+            }
+            __typename
+          }
+          assetPathPrefix
+          priceRange {
+            min
+            max
+            __typename
+          }
+          momentListings {
+            id
+            moment {
+              id
+              price
+              flowSerialNumber
+              owner {
+                dapperID
+                username
+                profileImageUrl
+                __typename
+              }
+              setPlay {
+                ID
+                flowRetired
+                __typename
+              }
+              __typename
+            }
+            __typename
+          }
+          momentListingCount
+          __typename
+        }
+        __typename
+      }
+    }
+
+    fragment PlayDetails on Play {
+      id
+      description
+      stats {
+        playerID
+        playerName
+        primaryPosition
+        currentTeamId
+        dateOfMoment
+        jerseyNumber
+        awayTeamName
+        awayTeamScore
+        teamAtMoment
+        homeTeamName
+        homeTeamScore
+        totalYearsExperience
+        teamAtMomentNbaId
+        height
+        weight
+        currentTeam
+        birthplace
+        birthdate
+        awayTeamNbaId
+        draftYear
+        nbaSeason
+        draftRound
+        draftSelection
+        homeTeamNbaId
+        draftTeam
+        draftTeamNbaId
+        playCategory
+        homeTeamScoresByQuarter {
+          quarterScores {
+            type
+            number
+            sequence
+            points
+            __typename
+          }
+          __typename
+        }
+        awayTeamScoresByQuarter {
+          quarterScores {
+            type
+            number
+            sequence
+            points
+            __typename
+          }
+          __typename
+        }
+        __typename
+      }
+      statsPlayerGameScores {
+        blocks
+        points
+        steals
+        assists
+        minutes
+        rebounds
+        turnovers
+        plusMinus
+        flagrantFouls
+        personalFouls
+        playerPosition
+        technicalFouls
+        twoPointsMade
+        blockedAttempts
+        fieldGoalsMade
+        freeThrowsMade
+        threePointsMade
+        defensiveRebounds
+        offensiveRebounds
+        pointsOffTurnovers
+        twoPointsAttempted
+        assistTurnoverRatio
+        fieldGoalsAttempted
+        freeThrowsAttempted
+        twoPointsPercentage
+        fieldGoalsPercentage
+        freeThrowsPercentage
+        threePointsAttempted
+        threePointsPercentage
+        __typename
+      }
+      statsPlayerSeasonAverageScores {
+        minutes
+        blocks
+        points
+        steals
+        assists
+        rebounds
+        turnovers
+        plusMinus
+        flagrantFouls
+        personalFouls
+        technicalFouls
+        twoPointsMade
+        blockedAttempts
+        fieldGoalsMade
+        freeThrowsMade
+        threePointsMade
+        defensiveRebounds
+        offensiveRebounds
+        pointsOffTurnovers
+        twoPointsAttempted
+        assistTurnoverRatio
+        fieldGoalsAttempted
+        freeThrowsAttempted
+        twoPointsPercentage
+        fieldGoalsPercentage
+        freeThrowsPercentage
+        threePointsAttempted
+        threePointsPercentage
+        __typename
+      }
+      __typename
+    }
+  `;
+
+  const variables = {
+    input: {
+      setID: `${momentLink.setUUID}`,
+      playID: `${momentLink.playUUID}`,
+    },
+  };
+  try {
+    console.log("Requesting..");
+    let data = await request("https://api.nbatopshot.com/marketplace/graphql?SearchMintedMomentsForSerialNumberModal", query, variables);
+    let price = data.getUserMomentListings.data.priceRange.min;
+    marketLink.lowestAsk = { price: price, lastRequest: Date.now() };
+    marketLink.save(function (err) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      console.log("Lowest ask saved");
+      console.log(marketLink);
+    });
+    return price;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 /*async function test2(sales) {
   var key = "A.c1e4f4f4c4257510.Market.MomentPurchased";
   await poll(sales);

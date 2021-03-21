@@ -40,6 +40,7 @@ class discordBot {
     this.coolCats = await client.channels.fetch("811102592460783636");
     this.risingStarsChannel = await client.channels.fetch("818696831524405268");
 
+    this.allStarsChannel = await client.channels.fetch("822552376471715892");
     this.graphsChannel = await client.channels.fetch("818844774516654080");
   }
 
@@ -59,7 +60,7 @@ class discordBot {
 
         //.attachFiles(logo)
         .setFooter(
-          `Powered by Dime Monitors | ${Date.now() - card.listTime} ms | TS: ${card.getEvents + card.cadence} ms | Link: ${
+          `Powered by Dime Monitors | ${Date.now() - card.listTime} ms | TS: ${card.getEvents + card.cadence} ms | Ask: ${
             Date.now() - card.findLink
           } ms`,
           client.user.displayAvatarURL()
@@ -99,6 +100,10 @@ class discordBot {
             value: `$${parseInt(card.serialAverage)}`, //`$${parseInt(card.serialAverage)} (${card.averageLength}) (${card.rate})`
           },
           {
+            name: `Lowest Ask`,
+            value: `$${card.lowestAsk ? parseInt(card.lowestAsk) : "Not found"}`,
+          },
+          {
             name: "Undervalued",
             value: `${parseInt(card.averageSerialProfit)}%`,
             inline: true,
@@ -125,6 +130,7 @@ class discordBot {
         });
 
         messages.push({ message: msg, channel: this.testChannel });
+
         this.postGraph(card, messages);
       }
       if (card.delay) {
@@ -186,8 +192,18 @@ class discordBot {
         messages.push({ message: msg, channel: this.risingStarsChannel });
       }
 
+      if (card.set == "2021 All-Star Game") {
+        console.log("Cool cats");
+        let msg = this.allStarsChannel.send(embed).catch((err) => {
+          console.log(err);
+          fs.appendFileSync("./error.txt", "\n" + err);
+        });
+        messages.push({ message: msg, channel: this.allStarsChannel });
+      }
+
       if (
-        (card.serialMax.includes("+") &&
+        (card.serialMax &&
+          card.serialMax.includes("+") &&
           parseInt(card.serialMax.replace("+", "")) > 30000 &&
           card.set == "Base Set" &&
           card.setSeries == "2") ||
@@ -342,6 +358,11 @@ class discordBot {
               name: "Graph",
               inline: true,
             });
+
+            /*embed.fields.splice(embed.fields.length - 5, 0, {
+              name: `Lowest Ask`,
+              value: `$${card.lowestAsk ? parseInt(card.lowestAsk) : "Not found"}`,
+            });*/
             //embed.fields.push({ value: `[Yo](${graphMsg.url})`, name: "Graph", inline: true });
             m.edit(embed);
             //console.log(m.embeds[0].fields);

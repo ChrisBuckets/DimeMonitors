@@ -17,7 +17,7 @@ mongoose.connect("mongodb://localhost/cards", { useNewUrlParser: true, useCreate
 return;*/
 
 async function getSerials() {
-  DirectLink.find({ set: "2021 All-Star Game" }, async function (err, sets) {
+  DirectLink.find({ set: "Metallic Gold LE", setSeries: "2" }, async function (err, sets) {
     //for (let i = 0; i < sets.length; i++) {
     for (let i = sets.length - 1; i >= 0; i--) {
       let cursorPosition = "";

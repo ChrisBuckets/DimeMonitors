@@ -11,6 +11,7 @@ const marketLinkSchema = new mongoose.Schema({
   imageLink: String,
 
   serialMax: String,
+  lowestAsk: { price: Number, lastRequest: Number },
 });
 marketLinkSchema.index({ setID: 1, playID: 1, link: 1, imageLink: 1 }, { unique: true });
 

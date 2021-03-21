@@ -30,7 +30,7 @@ async function getImage() {
     deviceScaleFactor: 0.75,
   });
 
-  DirectLink.find({}, async function (err, sets) {
+  DirectLink.find({ set: "Metallic Gold LE", setSeries: "2" }, async function (err, sets) {
     MarketLink.find({}, async function (err, marketLinks) {
       let array = [];
       for (let i = 0; i < sets.length; i++) {
@@ -60,7 +60,7 @@ async function getImage() {
       for (let i = 0; i < array.length; i++) {
         try {
           console.log(array[i]);
-          if (array[i].set.set == "2021 All-Star Game") continue;
+
           let set = array[i].set;
           let play = array[i].play;
           await page.goto(`https://nbatopshot.com/listings/p2p/${set.setUUID}+${play.playUUID}`);
