@@ -117,6 +117,11 @@ class discordBot {
             inline: true,
           },
           {
+            name: "Graph",
+            value: `Fetching..`,
+            inline: true,
+          },
+          {
             name: "Serial Number",
             value: `${card.serialNumber} / ${card.serialMax}`,
           }
@@ -364,11 +369,12 @@ class discordBot {
           .then(function (m) {
             let embed = m.embeds[0];
             //console.log(embed);
-            embed.fields.splice(embed.fields.length - 1, 0, {
-              value: `[Sales (Past Month)](${graphMsg.url})`,
-              name: "Graph",
-              inline: true,
+
+            let getGraph = embed.fields.find(function (element) {
+              return element.name == "Graph";
             });
+
+            getGraph.value = `[Sales (Past Month)](${graphMsg.url})`;
 
             let getLowestAsk = embed.fields.find(function (element) {
               return element.name == "Lowest Ask";
