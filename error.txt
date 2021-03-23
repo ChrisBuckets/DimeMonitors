@@ -111,3 +111,4 @@ DiscordAPIError: Invalid Form Body
 embed.url: Could not interpret "{'_id': '60527b7cfd6962223cbcc80f', 'setID': 2, 'setUUID': '7b797690-5b53-45a7-b972-bd2d5152654a', 'set': 'Base Set', 'playID': 286, 'playUUID': '41c06593-8fdd-4d38-8766-02fb5dc42d9e', 'serialUUID': '3beadc1e-af55-4a7a-978e-012f9aaeb848', 'serialNumber': '1142', 'setSeries': '1', '__v': 0}" as string.
 DiscordAPIError: Invalid Form Body
 embed.url: Could not interpret "{'_id': '60527b7cfd6962223cbcc80f', 'setID': 2, 'setUUID': '7b797690-5b53-45a7-b972-bd2d5152654a', 'set': 'Base Set', 'playID': 286, 'playUUID': '41c06593-8fdd-4d38-8766-02fb5dc42d9e', 'serialUUID': '3beadc1e-af55-4a7a-978e-012f9aaeb848', 'serialNumber': '1142', 'setSeries': '1', '__v': 0}" as string.
+TypeError: this.postGraph is not a function

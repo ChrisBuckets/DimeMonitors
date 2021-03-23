@@ -1,4 +1,8 @@
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-extra");
+
+// add stealth plugin and use defaults (all evasion techniques)
+const StealthPlugin = require("puppeteer-extra-plugin-stealth");
+puppeteer.use(StealthPlugin());
 const mongoose = require("mongoose");
 const cardLinkSchema = require("./Schemas/cardLinkSchema.js");
 const CardLink = mongoose.model("CardLink", cardLinkSchema);
@@ -30,7 +34,23 @@ async function getImage() {
     deviceScaleFactor: 0.75,
   });
 
-  DirectLink.find({ set: "Metallic Gold LE", setSeries: "2" }, async function (err, sets) {
+  let lastRedirectResponse = undefined;
+  page.setRequestInterception(true);
+
+  page.on("response", (response) => {
+    // if this response is a redirect
+    if ([301, 302, 303, 307, 308].includes(response.status) && response.request().resourceType === "document") {
+      lastRedirectResponse = response;
+    }
+  });
+
+  page.on("request", (interceptedRequest) => {
+    // if this request is the one related to the lastRedirect
+    if (lastRedirectResponse && lastRedirectResponse.headers.location === interceptedRequest.url) {
+      interceptedRequest.abort();
+    }
+  });
+  DirectLink.find({ set: "Cool Cats", setSeries: "2" }, async function (err, sets) {
     MarketLink.find({}, async function (err, marketLinks) {
       let array = [];
       for (let i = 0; i < sets.length; i++) {
@@ -56,45 +76,43 @@ async function getImage() {
       //return console.log(array.length);
 
       //console.log(sets[i]);
-
+      await page.goto(`https://nbatopshot.com/`);
       for (let i = 0; i < array.length; i++) {
-        try {
-          console.log(array[i]);
+        console.log(array[i]);
 
-          let set = array[i].set;
-          let play = array[i].play;
-          await page.goto(`https://nbatopshot.com/listings/p2p/${set.setUUID}+${play.playUUID}`);
-          await page.waitForXPath("//ul//li/img");
+        let set = array[i].set;
+        let play = array[i].play;
+        console.log("Going to page");
+        await page.goto(`https://nbatopshot.com/listings/p2p/${set.setUUID}+${play.playUUID}`);
+        await page.waitForXPath("//ul//li/img");
 
-          let image = await page.$x("//ul//li/img");
-          //console.log(image);
-          let serialMax = await page.$x('//div/div/button[contains(@class, "CollectibleDetails")]/span');
-          let serialMaxText = await page.evaluate((element) => element.innerHTML, serialMax[0]);
+        let image = await page.$x("//ul//li/img");
+        //console.log(image);
+        let serialMax = await page.$x('//div/div/button[contains(@class, "CollectibleDetails")]/span');
+        let serialMaxText = await page.evaluate((element) => element.innerHTML, serialMax[0]);
 
-          console.log(serialMaxText);
+        console.log(serialMaxText);
 
-          let imageLink = await page.evaluate((element) => element.src, image[3]);
+        let imageLink = await page.evaluate((element) => element.src, image[3]);
 
-          const marketLink = new MarketLink({
-            setID: set.setID,
-            setUUID: set.setUUID,
-            set: set.set,
-            playID: play.playID,
-            playUUID: play.playUUID,
+        const marketLink = new MarketLink({
+          setID: set.setID,
+          setUUID: set.setUUID,
+          set: set.set,
+          playID: play.playID,
+          playUUID: play.playUUID,
 
-            link: `https://nbatopshot.com/listings/p2p/${set.setUUID}+${play.playUUID}`,
-            imageLink: imageLink,
-            serialMax: serialMaxText,
-          });
+          link: `https://nbatopshot.com/listings/p2p/${set.setUUID}+${play.playUUID}`,
+          imageLink: imageLink,
+          serialMax: serialMaxText,
+        });
 
-          await marketLink.save(function (err) {
-            if (err) console.log(err);
-            console.log("saved " + marketLink);
-          });
-          await page.waitForTimeout(1000);
-        } catch (err) {
-          console.log(err);
-        }
+        await marketLink.save(function (err) {
+          if (err) console.log(err);
+          console.log("saved " + marketLink);
+        });
+        await page.waitForTimeout(1000);
+        console.log("next");
       }
 
       console.log(array);

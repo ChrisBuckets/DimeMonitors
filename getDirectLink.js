@@ -1,11 +1,14 @@
-const { request, gql } = require("graphql-request");
+const { GraphQLClient, request, gql } = require("graphql-request");
 const mongoose = require("mongoose");
 const directLinkSchema = require("./Schemas/directLinkSchema.js");
 const DirectLink = mongoose.model("DirectLink", directLinkSchema);
 const momentLinkSchema = require("./Schemas/momentLinkSchema.js");
 const MomentLink = mongoose.model("MomentLink", momentLinkSchema);
+const marketLinkSchema = require("./Schemas/marketLinkSchema.js");
+const MarketLink = mongoose.model("MarketLink", marketLinkSchema);
 mongoose.connect("mongodb://localhost/cards", { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true });
-
+const client = new GraphQLClient("https://public-api.nbatopshot.com/graphql");
+client.setHeader("User-Agent", "https://twitter.com/DimeMonitors");
 /*DirectLink.findOne({ set: "Holo Icon" }, async function (err, set) {
   return console.log(set.plays[0].serials);
   let findPlay = set.plays.find((element) => element.playerName == "Zion Williamson");
@@ -17,7 +20,7 @@ mongoose.connect("mongodb://localhost/cards", { useNewUrlParser: true, useCreate
 return;*/
 
 async function getSerials() {
-  DirectLink.find({ set: "Metallic Gold LE", setSeries: "2" }, async function (err, sets) {
+  DirectLink.find({ set: "Cool Cats", setSeries: "2" }, async function (err, sets) {
     //for (let i = 0; i < sets.length; i++) {
     for (let i = sets.length - 1; i >= 0; i--) {
       let cursorPosition = "";
@@ -165,28 +168,29 @@ async function getMoreSerials(set, setPlay, setID, playID, cursorPosition) {
       },
     },
   };
+
   try {
     console.log("Requesting..");
-    await request("https://api.nbatopshot.com/marketplace/graphql?SearchMintedMomentsForSerialNumberModal", query, variables).then(
-      async (data) => {
-        //console.log(data.searchMintedMoments.data);
+    await client.request(query, variables).then(async (data) => {
+      //console.log(data.searchMintedMoments.data);
 
-        let cursorPosition = data.searchMintedMoments.data.searchSummary.pagination.rightCursor;
-        if (data.searchMintedMoments.data.searchSummary.data.data.length <= 0) {
-          console.log("data array empty");
-          return;
-        }
-        await DirectLink.findOne({ setUUID: setID }, async function (err, set) {
-          console.log(setID + " " + playID + " " + data.searchMintedMoments.data.searchSummary.data.data.length);
-          console.log(set);
-          for (let i = 0; i < data.searchMintedMoments.data.searchSummary.data.data.length; i++) {
-            let serialData = data.searchMintedMoments.data.searchSummary.data.data;
-            /*let findSet = set.plays.find((element) => element.playUUID == playID);
+      let cursorPosition = data.searchMintedMoments.data.searchSummary.pagination.rightCursor;
+      if (data.searchMintedMoments.data.searchSummary.data.data.length <= 0) {
+        console.log("data array empty");
+        return;
+      }
+
+      let serialData = data.searchMintedMoments.data.searchSummary.data.data;
+      await DirectLink.findOne({ setUUID: setID }, async function (err, set) {
+        console.log(setID + " " + playID + " " + data.searchMintedMoments.data.searchSummary.data.data.length);
+        console.log(set);
+        for (let i = 0; i < data.searchMintedMoments.data.searchSummary.data.data.length; i++) {
+          /*let findSet = set.plays.find((element) => element.playUUID == playID);
             if (!findSet.serials) {
               console.log("Serial plays not found");
               set.plays.serials = [];
             }*/
-            /*await MomentLink.findOne(
+          /*await MomentLink.findOne(
               { setUUID: setID, playUUID: playID, serialNumber: serialData[i].flowSerialNumber },
               async function (err, moment) {
                 if (moment) {
@@ -194,33 +198,34 @@ async function getMoreSerials(set, setPlay, setID, playID, cursorPosition) {
                   return;
                 }*/
 
-            const momentLink = new MomentLink({
-              setID: set.setID,
-              setUUID: setID,
-              set: serialData[i].set.flowName,
-              playID: setPlay.playID,
-              playUUID: playID,
-              serialUUID: serialData[i].id,
-              serialNumber: serialData[i].flowSerialNumber,
-              setSeries: serialData[i].set.flowSeriesNumber,
-            });
+          const momentLink = new MomentLink({
+            setID: set.setID,
+            setUUID: setID,
+            set: serialData[i].set.flowName,
+            playID: setPlay.playID,
+            playUUID: playID,
+            serialUUID: serialData[i].id,
+            serialNumber: serialData[i].flowSerialNumber,
+            setSeries: serialData[i].set.flowSeriesNumber,
+          });
+          console.log(momentLink);
+          await momentLink.save(function (err) {
+            if (err) console.log(err);
+            console.log("saved " + serialData[i].flowSerialNumber + " " + setPlay.playerName);
+          });
 
-            await momentLink.save(function (err) {
-              if (err) console.log(err);
-              console.log("saved " + serialData[i].flowSerialNumber + " " + setPlay.playerName);
-            });
-            /*}
+          /*}
             )
               .select({ setUUID: 1, playUUID: 1, serialNumber: 1 })
               .lean();*/
-          }
+        }
 
-          /*set.save(function (err) {
+        /*set.save(function (err) {
             if (err) return console.log(err);
             console.log("serial saved " + set.set);
           });*/
 
-          /*if (data.searchMintedMoments.data.searchSummary.pagination.rightCursor != "") {
+        /*if (data.searchMintedMoments.data.searchSummary.pagination.rightCursor != "") {
           getMoreSerials(set, setID, playID, cursorPosition);
           console.log(
             "Getting more serials " +
@@ -231,12 +236,25 @@ async function getMoreSerials(set, setPlay, setID, playID, cursorPosition) {
               cursorPosition
           );
         }*/
-        });
-        console.log("Getting more serials");
-        await getMoreSerials(set, setPlay, setID, playID, cursorPosition);
-        //console.log(data.searchMintedMoments.data.searchSummary.data.data)
-      }
-    );
+      });
+
+      await MarketLink.findOne({ setUUID: setID, playUUID: playID }, async function (err, marketLink) {
+        if (marketLink) {
+          marketLink.imageLink = `${serialData.assetPathPrefix}Hero_2880_2880_Black.jpg?width=160&quality=80`;
+          marketLink.serialMax = `${serialData.circulationCount}`;
+          marketLink.save(function (err) {
+            if (err) {
+              console.log(err);
+              return;
+            }
+            console.log("Market link saved");
+          });
+        }
+      });
+      console.log("Getting more serials");
+      await getMoreSerials(set, setPlay, setID, playID, cursorPosition);
+      //console.log(data.searchMintedMoments.data.searchSummary.data.data)
+    });
   } catch (err) {
     console.log(err);
 
@@ -266,7 +284,7 @@ function getSets() {
                 flowSeriesNumber
                 flowLocked
                 setVisualId
-
+                assetPathPrefix
                 plays {
                   id
                   version
@@ -290,14 +308,14 @@ function getSets() {
     }
   `;
 
-  request("https://api.nbatopshot.com/marketplace/graphql?", query).then((data) => {
+  client.request(query).then((data) => {
     //console.log(data.searchSets.searchSummary.data.data);
     let dataLength = data.searchSets.searchSummary.data.data.length;
     console.log(dataLength);
     for (let i = 0; i < dataLength; i++) {
       console.log("getting");
       let setData = data.searchSets.searchSummary.data.data[i];
-      //return console.log(setData);
+
       for (let i = 0; i < setData.plays.length; i++) {
         delete setData.plays[i]["version"];
         delete setData.plays[i]["status"];

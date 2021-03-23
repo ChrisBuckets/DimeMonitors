@@ -5,7 +5,9 @@ const fs = require("fs");
 const mongoose = require("mongoose");
 const marketLinkSchema = require("./Schemas/marketLinkSchema.js");
 const MarketLink = mongoose.model("MarketLink", marketLinkSchema);
-const { request, gql } = require("graphql-request");
+const { GraphQLClient, request, gql } = require("graphql-request");
+const graphClient = new GraphQLClient("https://public-api.nbatopshot.com/graphql");
+graphClient.setHeader("User-Agent", "https://twitter.com/DimeMonitors");
 const QuickChart = require("quickchart-js");
 class discordBot {
   async init() {
@@ -61,11 +63,9 @@ class discordBot {
 
         //.attachFiles(logo)
         .setFooter(
-          `Powered by Dime Monitors | ${Date.now() - card.listTime} ms | TS: ${
-            card.getEvents + card.cadence
-          } ms` /*| Ask: ${
-            Date.now() - card.findLink
-          } ms (${card.lowestAskRequest})`*/,
+          `Powered by Dime Monitors | ${Date.now() - card.listTime} ms | TS: ${card.getEvents + card.cadence} ms | Check: ${
+            card.checkForSnipes
+          }`,
           client.user.displayAvatarURL()
         )
         /*.setFooter(
@@ -139,7 +139,8 @@ class discordBot {
 
         messages.push({ message: msg, channel: this.testChannel });
 
-        this.postGraph(card, messages);
+        this.updateCard(card, messages);
+        return;
       }
       if (card.delay) {
         let msg = this.testChannel.send(embed).catch((err) => {
@@ -380,7 +381,7 @@ class discordBot {
               return element.name == "Lowest Ask";
             });
 
-            getLowestAsk.value = `$${card.lowestAsk ? parseInt(card.lowestAsk) : "Not found"}`;
+            getLowestAsk.value = `$${card.lowestAsk ? parseInt(card.lowestAsk) : ""}`;
 
             //embed.fields.push({ value: `[Yo](${graphMsg.url})`, name: "Graph", inline: true });
             m.edit(embed);
@@ -400,7 +401,7 @@ class discordBot {
       lowestAsk: 1,
     });
 
-    if (marketLink.lowestAsk && Date.now() - marketLink.lowestAsk.lastRequest < 1800000) {
+    if (marketLink && marketLink.lowestAsk && Date.now() - marketLink.lowestAsk.lastRequest < 1800000) {
       console.log("db data returned");
       return { price: marketLink.lowestAsk.price, graphql: false };
     }
@@ -585,9 +586,10 @@ class discordBot {
         playID: `${momentLink.playUUID}`,
       },
     };
+
     try {
       console.log("Requesting..");
-      let data = await request("https://api.nbatopshot.com/marketplace/graphql?SearchMintedMomentsForSerialNumberModal", query, variables);
+      let data = await graphClient.request(query, variables);
       let price = data.getUserMomentListings.data.priceRange.min;
       marketLink.lowestAsk = { price: price, lastRequest: Date.now() };
       marketLink.save(function (err) {
