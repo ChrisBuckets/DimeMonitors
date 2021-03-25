@@ -22,9 +22,12 @@ async function startDime() {
   await dime.init();
 }
 
-//startDime();
+startDime();
 
-SoldCard.find({ name: "RJ Barrett", set: "Cool Cats", setSeries: "2" }, async function (err, cards) {
+setTimeout(function () {
+  process.exit();
+}, 7200000);
+/*SoldCard.find({ name: "RJ Barrett", set: "Cool Cats", setSeries: "2" }, async function (err, cards) {
   await startDime();
 
   let card = cards[0];
@@ -34,7 +37,7 @@ SoldCard.find({ name: "RJ Barrett", set: "Cool Cats", setSeries: "2" }, async fu
   card.test = true;
 
   checkForSnipes(card, 86400000);
-});
+});*/
 // Push to queue, if can get data from cryptoslam send to discord, if not just save to DB
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -42,9 +45,9 @@ db.once("open", function () {
   console.log("db connected!");
 });
 let sales = [];
-/*pollListings().then(function () {
+pollListings().then(function () {
   console.log("Done");
-});*/
+});
 
 /*saveSales().then(function () {
   console.log("Done");
@@ -104,7 +107,7 @@ async function pollListings(sales) {
             let momentIDs = [parseInt(depositEvents[j].data.id)];
             console.log(momentIDs);
 
-            getCard(data, address, momentIDs, hwm, startTime, j, depositEvents.length, getEvents);
+            getCard(data, address, momentIDs, { hwm: hwm, end: end }, startTime, j, depositEvents.length, getEvents);
             console.log("SENT GET CARD");
           }
         }
@@ -119,7 +122,7 @@ async function pollListings(sales) {
   }
 }
 
-async function getCard(data, address, momentIDs, hwm, startTime, j, length, getEvents) {
+async function getCard(data, address, momentIDs, blockHeight, startTime, j, length, getEvents) {
   try {
     let cadence = Date.now();
     const resp = await fcl.send([
@@ -169,7 +172,7 @@ async function getCard(data, address, momentIDs, hwm, startTime, j, length, getE
       //console.log(r[0]);
       let cardDetails = r[0];
       let card = {
-        blockHeight: hwm,
+        blockHeight: (blockHeight.hwm + blockHeight.end) / 2,
         id: cardDetails.id,
         setID: cardDetails.meta.setID,
         playID: cardDetails.meta.playID,

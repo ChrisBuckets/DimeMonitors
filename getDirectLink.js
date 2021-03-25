@@ -181,6 +181,7 @@ async function getMoreSerials(set, setPlay, setID, playID, cursorPosition) {
       }
 
       let serialData = data.searchMintedMoments.data.searchSummary.data.data;
+
       await DirectLink.findOne({ setUUID: setID }, async function (err, set) {
         console.log(setID + " " + playID + " " + data.searchMintedMoments.data.searchSummary.data.data.length);
         console.log(set);
@@ -240,16 +241,36 @@ async function getMoreSerials(set, setPlay, setID, playID, cursorPosition) {
 
       await MarketLink.findOne({ setUUID: setID, playUUID: playID }, async function (err, marketLink) {
         if (marketLink) {
-          marketLink.imageLink = `${serialData.assetPathPrefix}Hero_2880_2880_Black.jpg?width=160&quality=80`;
-          marketLink.serialMax = `${serialData.circulationCount}`;
+          marketLink.imageLink = `${serialData[0].assetPathPrefix}Hero_2880_2880_Black.jpg?width=160&quality=80`;
+          marketLink.serialMax = `${serialData[0].setPlay.circulationCount}`; //Get first moment, doesn't matter which one, just need the image for the moment
           marketLink.save(function (err) {
             if (err) {
               console.log(err);
               return;
             }
-            console.log("Market link saved");
+            console.log(marketLink + " Market link saved");
           });
         }
+
+        const newMarketLink = new MarketLink({
+          setID: set.setID,
+          setUUID: set.setUUID,
+          set: set.set,
+          playID: setPlay.playID,
+          playUUID: setPlay.playUUID,
+
+          link: `https://nbatopshot.com/listings/p2p/${set.setUUID}+${setPlay.playUUID}`,
+          imageLink: `${serialData[0].assetPathPrefix}Hero_2880_2880_Black.jpg?width=160&quality=80`,
+          serialMax: `${serialData[0].setPlay.circulationCount}`,
+        });
+
+        newMarketLink.save(function (err) {
+          if (err) {
+            console.log(err);
+            return;
+          }
+          console.log(newMarketLink + " New market link saved");
+        });
       });
       console.log("Getting more serials");
       await getMoreSerials(set, setPlay, setID, playID, cursorPosition);
@@ -284,7 +305,6 @@ function getSets() {
                 flowSeriesNumber
                 flowLocked
                 setVisualId
-                assetPathPrefix
                 plays {
                   id
                   version
@@ -328,7 +348,7 @@ function getSets() {
       }
 
       DirectLink.findOne({ set: setData.flowName }, function (err, set) {
-        if (set) return;
+        //if (set) return;
         const directLink = new DirectLink({
           setID: setData.flowId,
           setUUID: setData.id,
@@ -345,4 +365,5 @@ function getSets() {
     }
   });
 }
+
 //getSets();

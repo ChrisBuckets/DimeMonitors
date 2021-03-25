@@ -50,7 +50,7 @@ async function saveSales() {
             let address = depositEvents[j].data.to;
             let momentIDs = [parseInt(depositEvents[j].data.id)];
 
-            saveCard(data, hwm, i, seller, address, momentIDs);
+            saveCard(data, { hwm: hwm, end: end }, i, seller, address, momentIDs);
           }
         }
       }
@@ -62,7 +62,7 @@ async function saveSales() {
   }
 }
 
-async function saveCard(data, hwm, i, seller, address, momentIDs) {
+async function saveCard(data, blockHeight, i, seller, address, momentIDs) {
   try {
     console.log("Sending script..");
     const resp = await fcl.send([
@@ -126,7 +126,7 @@ async function saveCard(data, hwm, i, seller, address, momentIDs) {
       };
 
       const soldCard = new SoldCard({
-        blockHeight: hwm,
+        blockHeight: (blockHeight.hwm + blockHeight.end) / 2,
         id: card.id,
         setID: card.setID,
         playID: card.playID,
@@ -149,6 +149,7 @@ async function saveCard(data, hwm, i, seller, address, momentIDs) {
       soldCard.save(function (err) {
         if (err) return console.error(err);
         console.log("sold card saved");
+        console.log(soldCard);
         console.log(i);
       });
       console.log("Yoo");

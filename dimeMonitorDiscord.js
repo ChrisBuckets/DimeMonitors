@@ -5,6 +5,8 @@ const fs = require("fs");
 const mongoose = require("mongoose");
 const marketLinkSchema = require("./Schemas/marketLinkSchema.js");
 const MarketLink = mongoose.model("MarketLink", marketLinkSchema);
+const soldCardSchema = require("./Schemas/soldCardSchema.js");
+const SoldCard = mongoose.model("Card", soldCardSchema);
 const { GraphQLClient, request, gql } = require("graphql-request");
 const graphClient = new GraphQLClient("https://public-api.nbatopshot.com/graphql");
 graphClient.setHeader("User-Agent", "https://twitter.com/DimeMonitors");
@@ -45,6 +47,8 @@ class discordBot {
 
     this.allStarsChannel = await client.channels.fetch("822552376471715892");
     this.graphsChannel = await client.channels.fetch("818844774516654080");
+
+    this.snipes = [];
   }
 
   async sendCard(card) {
@@ -75,7 +79,7 @@ class discordBot {
           client.user.displayAvatarURL()
         )*/
 
-        .setColor("#00AAFF")
+        .setColor("#008000")
         .setTimestamp()
         .addFields(
           { name: "All listings", value: `[View](${card.link})` },
@@ -140,7 +144,6 @@ class discordBot {
         messages.push({ message: msg, channel: this.testChannel });
 
         this.updateCard(card, messages);
-        return;
       }
       if (card.delay) {
         let msg = this.testChannel.send(embed).catch((err) => {
@@ -272,12 +275,103 @@ class discordBot {
       messages.push({ message: msg, channel: this.allChannel });
 
       this.updateCard(card, messages);
+      this.snipes.push({ card: card, messages: messages });
+      this.checkSnipes();
     } catch (err) {
       console.log(err);
       fs.appendFileSync("./error.txt", "\n" + err);
     }
   }
 
+  async checkSnipes() {
+    if (this.snipes.length > 0) {
+      for (let i = 0; i < this.snipes.length; i++) {
+        let index = this.snipes.indexOf(this.snipes[i]);
+        if (Date.now() - this.snipes[i].card.timestamp > 300000) {
+          this.snipes.splice(index, 1);
+          continue;
+        }
+
+        let messages = this.snipes[i].messages;
+        let card = this.snipes[i].card;
+        let time = 3600000;
+        let self = this;
+        SoldCard.findOne(
+          {
+            blockHeight: { $gt: card.blockHeight },
+            price: card.price,
+            set: card.set,
+            setID: card.setID,
+            playID: card.playID,
+            name: card.name,
+            playCategory: card.playCategory,
+            setSeries: card.setSeries,
+            serialNumber: card.serialNumber,
+            timestamp: { $gt: Date.now() - 300000 },
+          },
+          async function (err, soldCard) {
+            if (!soldCard) {
+              console.log("Card not purchased yet");
+              return;
+            }
+            console.log(soldCard);
+            console.log(card);
+
+            let purchaseSpeed = (soldCard.blockHeight - card.blockHeight) * 3.5;
+            if (purchaseSpeed <= 0) {
+              console.log(soldCard);
+              console.log(card);
+              process.exit();
+            }
+            let userName = await self.getUserName(card.momentDetails.serialUUID);
+            for (let i = 0; i < messages.length; i++) {
+              let msg = messages[i].message;
+              console.log(msg + " yo");
+              msg.then(function (result) {
+                console.log(result.channel.id);
+                let channel = messages[i].channel;
+                channel.messages
+                  .fetch(result.id)
+                  .then(function (m) {
+                    let embed = m.embeds[0];
+                    //console.log(embed);
+                    embed.color = "#FF0000";
+
+                    let getPrice = embed.fields.find(function (element) {
+                      return element.name == "Price";
+                    });
+
+                    getPrice.name = `~~Price~~ Sold`;
+                    getPrice.value += ` (Purchased by ${userName ? userName : ""} in ${purchaseSpeed} seconds)`;
+
+                    //embed.fields.push({ value: `[Yo](${graphMsg.url})`, name: "Graph", inline: true });
+                    m.edit(embed);
+                    //console.log(m.embeds[0].fields);
+                    self.snipes.splice(index, 1); //Remove snipe from array after updating that it was sold
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              });
+            }
+          }
+        )
+          .select({
+            set: 1,
+            timestamp: 1,
+            setID: 1,
+            playID: 1,
+            name: 1,
+            playCategory: 1,
+            setSeries: 1,
+            price: 1,
+            serialNumber: 1,
+            blockHeight: 1,
+          })
+          .lean();
+      }
+    }
+  }
   async updateCard(card, messages) {
     let chart = new QuickChart(); //Make array of all the send message promises, use promise all to add graph link to each message
     chart
@@ -401,7 +495,7 @@ class discordBot {
       lowestAsk: 1,
     });
 
-    if (marketLink && marketLink.lowestAsk && Date.now() - marketLink.lowestAsk.lastRequest < 1800000) {
+    if (marketLink && marketLink.lowestAsk && Date.now() - marketLink.lowestAsk.lastRequest < 1800000 * 2) {
       console.log("db data returned");
       return { price: marketLink.lowestAsk.price, graphql: false };
     }
@@ -604,6 +698,200 @@ class discordBot {
     } catch (err) {
       console.log(err);
     }
+  }
+
+  async getUserName(serialUUID) {
+    const query = gql`
+      query GetMintedMoment($momentId: ID!) {
+        getMintedMoment(momentId: $momentId) {
+          data {
+            ...MomentDetails
+            play {
+              ... on Play {
+                ...PlayDetails
+                __typename
+              }
+              __typename
+            }
+            __typename
+          }
+          __typename
+        }
+      }
+
+      fragment MomentDetails on MintedMoment {
+        id
+        version
+        sortID
+        set {
+          id
+          flowName
+          flowSeriesNumber
+          setVisualId
+          __typename
+        }
+        setPlay {
+          ID
+          flowRetired
+          circulationCount
+          __typename
+        }
+        assetPathPrefix
+        play {
+          id
+          stats {
+            playerID
+            playerName
+            primaryPosition
+            teamAtMomentNbaId
+            teamAtMoment
+            dateOfMoment
+            playCategory
+            __typename
+          }
+          __typename
+        }
+        price
+        listingOrderID
+        flowId
+        owner {
+          dapperID
+          username
+          profileImageUrl
+          __typename
+        }
+        flowSerialNumber
+        forSale
+        __typename
+      }
+
+      fragment PlayDetails on Play {
+        id
+        description
+        stats {
+          playerID
+          playerName
+          primaryPosition
+          currentTeamId
+          dateOfMoment
+          jerseyNumber
+          awayTeamName
+          awayTeamScore
+          teamAtMoment
+          homeTeamName
+          homeTeamScore
+          totalYearsExperience
+          teamAtMomentNbaId
+          height
+          weight
+          currentTeam
+          birthplace
+          birthdate
+          awayTeamNbaId
+          draftYear
+          nbaSeason
+          draftRound
+          draftSelection
+          homeTeamNbaId
+          draftTeam
+          draftTeamNbaId
+          playCategory
+          homeTeamScoresByQuarter {
+            quarterScores {
+              type
+              number
+              sequence
+              points
+              __typename
+            }
+            __typename
+          }
+          awayTeamScoresByQuarter {
+            quarterScores {
+              type
+              number
+              sequence
+              points
+              __typename
+            }
+            __typename
+          }
+          __typename
+        }
+        statsPlayerGameScores {
+          blocks
+          points
+          steals
+          assists
+          minutes
+          rebounds
+          turnovers
+          plusMinus
+          flagrantFouls
+          personalFouls
+          playerPosition
+          technicalFouls
+          twoPointsMade
+          blockedAttempts
+          fieldGoalsMade
+          freeThrowsMade
+          threePointsMade
+          defensiveRebounds
+          offensiveRebounds
+          pointsOffTurnovers
+          twoPointsAttempted
+          assistTurnoverRatio
+          fieldGoalsAttempted
+          freeThrowsAttempted
+          twoPointsPercentage
+          fieldGoalsPercentage
+          freeThrowsPercentage
+          threePointsAttempted
+          threePointsPercentage
+          __typename
+        }
+        statsPlayerSeasonAverageScores {
+          minutes
+          blocks
+          points
+          steals
+          assists
+          rebounds
+          turnovers
+          plusMinus
+          flagrantFouls
+          personalFouls
+          technicalFouls
+          twoPointsMade
+          blockedAttempts
+          fieldGoalsMade
+          freeThrowsMade
+          threePointsMade
+          defensiveRebounds
+          offensiveRebounds
+          pointsOffTurnovers
+          twoPointsAttempted
+          assistTurnoverRatio
+          fieldGoalsAttempted
+          freeThrowsAttempted
+          twoPointsPercentage
+          fieldGoalsPercentage
+          freeThrowsPercentage
+          threePointsAttempted
+          threePointsPercentage
+          __typename
+        }
+        __typename
+      }
+    `;
+    const variables = {
+      momentId: `${serialUUID}`,
+    };
+
+    let data = await graphClient.request(query, variables);
+    /*console.log(data);
+    console.log(data.getMintedMoment.data);*/
+    if (data) return data.getMintedMoment.data.owner.username;
   }
 }
 
