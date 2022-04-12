@@ -32,8 +32,8 @@ async function saveSales() {
         console.log("hwm is the same", hwm, end);
         continue;
       }
-      let events = await fcl.send([fcl.getEvents(key, hwm, end)]).then(fcl.decode);
-      let depositEvents = await fcl.send([fcl.getEvents(momentDepositedKey, hwm, end)]).then(fcl.decode);
+      let events = await fcl.send([fcl.getEvents(key, hwm, end + 1)]).then(fcl.decode);
+      let depositEvents = await fcl.send([fcl.getEvents(momentDepositedKey, hwm, end + 1)]).then(fcl.decode);
       console.log("getting events");
       for (let i = 0; i < events.length; i++) {
         let data = events[i].data;
@@ -160,19 +160,3 @@ async function saveCard(data, blockHeight, i, seller, address, momentIDs) {
     console.log(err);
   }
 }
-/*const soldCard = new Card({
-    mint: sales.id,
-    set: cardDetails.set ? cardDetails.set : null,
-    name: cardDetails.name ? cardDetails.name : null,
-    jersey: cardDetails.jersey ? cardDetails.jersey : null,
-    team: cardDetails.team ? cardDetails.team : null,
-    playCategory: cardDetails.playCategory ? cardDetails.playCategory : null,
-    number: cardDetails.number ? cardDetails.number : null,
-
-    price: parseInt(sales.price),
-  });
-  dime.sendCard(cardDetails);
-  soldCard.save(function (err, card) {
-    if (err) return console.error(err);
-    console.log("card saved");
-  });*/

@@ -1,1 +1,0 @@
-{"options":{},"indexes":[{"v":2,"key":{"_id":1},"name":"_id_","ns":"cards.cards"},{"v":2,"unique":true,"key":{"blockHeight":1,"id":1,"price":1},"name":"blockHeight_1_id_1_price_1","ns":"cards.cards","background":true}],"uuid":"92490047200044509dd11dc948bb86b5"}

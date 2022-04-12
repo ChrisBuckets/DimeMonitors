@@ -20,13 +20,22 @@ client.setHeader("User-Agent", "https://twitter.com/DimeMonitors");
 return;*/
 
 async function getSerials() {
-  DirectLink.find({ set: "Cool Cats", setSeries: "2" }, async function (err, sets) {
+  DirectLink.find({ set: "Rising Stars", setSeries: "2" }, async function (err, sets) {
     //for (let i = 0; i < sets.length; i++) {
     for (let i = sets.length - 1; i >= 0; i--) {
       let cursorPosition = "";
       console.log(i + " " + sets[i]);
       for (let j = 0; j < sets[i].plays.length; j++) {
         console.log("Executed before await done " + j);
+        console.log(sets[i].plays[j].playerName);
+        if (
+          sets[i].plays[j].playerName != "Shai Gilgeous-Alexander" &&
+          sets[i].plays[j].playerName != "Anthony Davis" &&
+          sets[i].plays[j].playerName != "Damion Lee" &&
+          sets[i].plays[j].playerName != "Kent Bazemore"
+        )
+          continue;
+
         await getMoreSerials(sets[i], sets[i].plays[j], sets[i].setUUID, sets[i].plays[j].playUUID, "");
       }
       console.log(i + "Current set");
@@ -269,7 +278,7 @@ async function getMoreSerials(set, setPlay, setID, playID, cursorPosition) {
             console.log(err);
             return;
           }
-          console.log(newMarketLink + " New market link saved");
+          console.log(newMarketLink + " New market link saved ");
         });
       });
       console.log("Getting more serials");
@@ -278,7 +287,6 @@ async function getMoreSerials(set, setPlay, setID, playID, cursorPosition) {
     });
   } catch (err) {
     console.log(err);
-
     if (!set.attempts) set.attempts = 1;
     set.attempts += 1;
     console.log(set.set + " " + "attempt " + set.attempts);

@@ -59,25 +59,18 @@ class discordBot {
 
       const embed = new Discord.MessageEmbed()
         .setTitle(card.name)
-        //.setURL(card.link ? card.link : "https://nbatopshot.com")
+
         .setURL(card.momentLink ? card.momentLink : "https://nbatopshot.com")
         .setAuthor("NBA Topshot")
 
         .setThumbnail(card.imageLink ? card.imageLink : "attachment://kobe.jpg")
 
-        //.attachFiles(logo)
         .setFooter(
           `Powered by Dime Monitors | ${Date.now() - card.listTime} ms | TS: ${card.getEvents + card.cadence} ms | Check: ${
             card.checkForSnipes
           }`,
           client.user.displayAvatarURL()
         )
-        /*.setFooter(
-          `Powered by Dime Monitors | ${Date.now() - card.listTime} ms | Cadence: ${card.cadence} | Discord: ${
-            Date.now() - card.discordPost
-          } | Snipe Check: ${card.checkForSnipes} | Count: ${card.count} | getEvents: ${card.getEvents}`,
-          client.user.displayAvatarURL()
-        )*/
 
         .setColor("#008000")
         .setTimestamp()
@@ -91,20 +84,10 @@ class discordBot {
             name: `Price`,
             value: `$${parseInt(card.price)}`,
           },
-          /*{
-            name: "Average Price",
-  
-            value: `$${card.averagePrice}`,
-          },
-          {
-            name: "Profit",
-            value: `${card.averagePriceProfit}%`,
-            inline: true,
-          },*/
           {
             name: `Average Price`,
 
-            value: `$${parseInt(card.serialAverage)}`, //`$${parseInt(card.serialAverage)} (${card.averageLength}) (${card.rate})`
+            value: `$${parseInt(card.serialAverage)}`,
           },
           {
             name: `Lowest Ask`,
@@ -129,10 +112,6 @@ class discordBot {
             name: "Serial Number",
             value: `${card.serialNumber} / ${card.serialMax}`,
           }
-          /*{
-            name: "Sales",
-            value: card.array.join(),
-          }*/
         );
       let messages = [];
       if (card.test) {
@@ -229,7 +208,7 @@ class discordBot {
         messages.push({ message: msg, channel: this.newBaseSetTwo });
       }
 
-      if (/*card.averagePriceProfit >= 0.1 ||*/ card.averageSerialProfit >= 10) {
+      if (card.averageSerialProfit >= 10) {
         let msg = this.tenPlus.send(embed).catch((err) => {
           console.log(err);
           fs.appendFileSync("./error.txt", "\n" + err);
@@ -237,7 +216,7 @@ class discordBot {
         messages.push({ message: msg, channel: this.tenPlus });
       }
 
-      if (/*card.averagePriceProfit >= 0.2 || */ card.averageSerialProfit >= 20) {
+      if (card.averageSerialProfit >= 20) {
         let msg = this.twentyPlus.send(embed).catch((err) => {
           console.log(err);
           fs.appendFileSync("./error.txt", "\n" + err);
@@ -246,7 +225,7 @@ class discordBot {
         messages.push({ message: msg, channel: this.twentyPlus });
       }
 
-      if (/*card.averagePriceProfit >= 0.5 ||*/ card.averageSerialProfit >= 40) {
+      if (card.averageSerialProfit >= 40) {
         let msg = this.fortyPlus.send(embed).catch((err) => {
           console.log(err);
           fs.appendFileSync("./error.txt", "\n" + err);
@@ -264,8 +243,7 @@ class discordBot {
       }
 
       console.log("normal channel");
-      /*let channel = client.channels.cache.get(card.channel);
-      channel.send(embed);*/
+
       console.log("All channel");
       let msg = this.allChannel.send(embed).catch((err) => {
         console.log(err);
@@ -277,6 +255,7 @@ class discordBot {
       this.updateCard(card, messages);
       this.snipes.push({ card: card, messages: messages });
       this.checkSnipes();
+      console.log("SNIPES ARRAY LENGTH " + this.snipes.length);
     } catch (err) {
       console.log(err);
       fs.appendFileSync("./error.txt", "\n" + err);
@@ -334,26 +313,24 @@ class discordBot {
                   .fetch(result.id)
                   .then(function (m) {
                     let embed = m.embeds[0];
-                    //console.log(embed);
+
                     embed.color = "#FF0000";
 
                     let getPrice = embed.fields.find(function (element) {
-                      return element.name == "Price";
+                      return element.name.includes("Price");
                     });
 
                     getPrice.name = `~~Price~~ Sold`;
-                    getPrice.value += ` (Purchased by ${userName ? userName : ""} in ${purchaseSpeed} seconds)`;
+                    getPrice.value = `$${soldCard.price} (Purchased by ${userName ? userName : ""} in ${purchaseSpeed} seconds)`;
 
-                    //embed.fields.push({ value: `[Yo](${graphMsg.url})`, name: "Graph", inline: true });
                     m.edit(embed);
-                    //console.log(m.embeds[0].fields);
-                    self.snipes.splice(index, 1); //Remove snipe from array after updating that it was sold
                   })
                   .catch((err) => {
                     console.log(err);
                   });
               });
             }
+            self.snipes.splice(index, 1); //Remove snipe from array after updating that it was sold
           }
         )
           .select({
@@ -373,7 +350,7 @@ class discordBot {
     }
   }
   async updateCard(card, messages) {
-    let chart = new QuickChart(); //Make array of all the send message promises, use promise all to add graph link to each message
+    let chart = new QuickChart();
     chart
       .setConfig({
         type: "line",
@@ -382,7 +359,7 @@ class discordBot {
             {
               label: `${card.name} Serial Range ${card.serialNumber} out of ${card.serialMax} (${card.monthSales.length})`,
               fill: false,
-              /*lineTension: 0.5,*/
+
               radius: 0.1,
 
               data: card.monthSales,
@@ -463,7 +440,6 @@ class discordBot {
           .fetch(result.id)
           .then(function (m) {
             let embed = m.embeds[0];
-            //console.log(embed);
 
             let getGraph = embed.fields.find(function (element) {
               return element.name == "Graph";
@@ -477,9 +453,7 @@ class discordBot {
 
             getLowestAsk.value = `$${card.lowestAsk ? parseInt(card.lowestAsk) : ""}`;
 
-            //embed.fields.push({ value: `[Yo](${graphMsg.url})`, name: "Graph", inline: true });
             m.edit(embed);
-            //console.log(m.embeds[0].fields);
           })
           .catch((err) => {
             console.log(err);
@@ -488,12 +462,17 @@ class discordBot {
     }
   }
 
+  //Fetches lowest ask using GraphQL
   async getLowestAsk(momentLink) {
-    let marketLink = await MarketLink.findOne({ setID: momentLink.setID, playID: momentLink.playID }).select({
-      setID: 1,
-      playID: 1,
-      lowestAsk: 1,
-    });
+    let marketLink;
+    if (!marketLink) return;
+    if (momentLink) {
+      marketLink = await MarketLink.findOne({ setID: momentLink.setID, playID: momentLink.playID }).select({
+        setID: 1,
+        playID: 1,
+        lowestAsk: 1,
+      });
+    }
 
     if (marketLink && marketLink.lowestAsk && Date.now() - marketLink.lowestAsk.lastRequest < 1800000 * 2) {
       console.log("db data returned");
@@ -889,8 +868,7 @@ class discordBot {
     };
 
     let data = await graphClient.request(query, variables);
-    /*console.log(data);
-    console.log(data.getMintedMoment.data);*/
+
     if (data) return data.getMintedMoment.data.owner.username;
   }
 }
