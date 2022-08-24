@@ -16,6 +16,7 @@ price is $351, this is a 48% difference so there is a lot of profit for the user
 in only 700 ms.
 
 If an average person on the website is trying to wait for this card to come up, there is no way they'd be able to compete with this program.
+
 <img src="https://i.imgur.com/enCBDOo.png">
 
 ## User success
