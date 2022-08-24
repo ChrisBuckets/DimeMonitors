@@ -28,7 +28,7 @@ A small example of a user purchasing an NFT for $20, and selling it for four tim
 ## Statistics
 
 * Over 5 million sales saved in a MongoDB database that the program used to find good deals
-* Listed the link to purchase the NFT in less then one second for it's users
+* Provides a link for users to purchase the NFT in less then one second
 * Over 50 users subscribed to the service
 
 ## Technologies
