@@ -37,7 +37,6 @@ A small example of a user purchasing an NFT for $20, and selling it for four tim
 * MongoDB
 * Flow Blockchain
 * Discord API
-* Ubuntu Server
 
 ## Summary
 I've made a lot of projects over the years but this is the one I'm most proud of. It made profit for my friends and I and it had demand within the NBA Topshot Community
